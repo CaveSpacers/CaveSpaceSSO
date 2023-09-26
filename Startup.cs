@@ -1,9 +1,7 @@
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using SSO.Controllers;
+using SSO.BL;
 using SSO.DAL.Implementations;
 using SSO.DAL.Interfaces;
-using SSO.DAL.Models;
 using SSO.Models;
 using SSO.Services.Implementations;
 using SSO.Services.Interfaces;
@@ -24,13 +22,11 @@ public class Startup
         services.AddTransient<IUserValidator, UserValidator>(_ => new UserValidator());
         services.AddDbContext<ApplicationContext>(options =>
             options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
-        
+
         Console.WriteLine(Configuration.GetConnectionString("DefaultConnection"));
 
         services.AddTransient<IUserDal, UserDal>();
-        //services.AddTransient<IUser, UserDal>();
-        // services.AddIdentity<User, Role>()
-        //     .AddEntityFrameworkStores<ApplicationContext>();
+        services.AddTransient<IUserBl, UserBl>();
 
         services.AddControllers();
     }

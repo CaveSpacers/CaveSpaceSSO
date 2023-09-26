@@ -7,20 +7,18 @@ namespace SSO.BL;
 
 public class UserBl : IUserBl
 {
-    private readonly IModel? _model;
     private readonly IUserValidator _userValidator;
     private readonly IUserDal _userDal;
 
-    public UserBl(IModel model, IUserDal userDal, IUserValidator userValidator)
+    public UserBl(IUserDal userDal, IUserValidator userValidator)
     {
-        _model = model;
         _userValidator = userValidator;
         _userDal = userDal;
     }
 
-    public Task<Result> CreateUser()
+    public Task<Result> CreateUser(IModel model)
     {
-        if (_model == null)
+        if (model == null)
         {
             return Task.FromResult(Result.Failed(
                 new Error
@@ -30,22 +28,22 @@ public class UserBl : IUserBl
             ));
         }
 
-        var validationResults = _userValidator.Validate(_model).Result;
+        var validationResults = _userValidator.Validate(model).Result;
 
         if (!validationResults.Succeeded)
         {
             return Task.FromResult(validationResults);
         }
 
-        string passwordHash = BCrypt.Net.BCrypt.HashPassword(_model.Password);
+        string passwordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
 
         var user = new User
         {
             UserId = Guid.NewGuid().ToString(),
-            Name = _model.Name,
-            Email = _model.Email,
+            Name = model.Name,
+            Email = model.Email,
             PasswordHash = passwordHash,
-            Role = _model.Role
+            Role = model.Role
         };
 
         try

@@ -11,7 +11,7 @@ public class UserValidator : IUserValidator
     private const string RequiredLettersPattern = @"[A-Z]";
     private const string RequiredSymbolsPattern = @"[!@#$%^&*()]";
     private const string RequiredDigitsPattern = @"\d";
-    
+
     //EmailRegex
     private const string RequiredEmailPattern = @"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b";
 
@@ -90,7 +90,7 @@ public class UserValidator : IUserValidator
                 }
             );
         }
-        
+
         if (!Regex.IsMatch(model.Email, RequiredEmailPattern))
         {
             errors.Add(

@@ -4,7 +4,7 @@ public struct Result
 {
     public bool Succeeded { get; set; }
 
-    private readonly List<IError> _errors = new List<IError>();
+    private readonly List<IError> _errors = new();
 
     public Result()
     {
@@ -30,8 +30,8 @@ public struct Result
         return result;
     }
 
-    // public static IError[]? Errors()
-    // {
-    //     return _errors;
-    // }
+    public IEnumerable<IError> Errors()
+    {
+        return _errors;
+    }
 }
