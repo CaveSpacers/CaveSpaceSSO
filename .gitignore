@@ -3,4 +3,8 @@ obj/
 /packages/
 riderModule.iml
 /_ReSharper.Caches/
+node_modules/
+/test-results/
+/playwright-report/
+/playwright/.cache/
 /.idea/.idea.SSO/.idea/dataSources.xml
