@@ -1,4 +1,4 @@
-namespace SSO.BL;
+namespace SSO.Bl.Interfaces;
 
 public interface IModel
 {

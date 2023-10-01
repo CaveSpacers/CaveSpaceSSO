@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using SSO.DAL.Interfaces;
 using SSO.DAL.Models;
 using SSO.Models;
@@ -13,15 +14,15 @@ public class UserDal : IUserDal
         _dbContext = dbContext;
     }
 
-    public User? FindByEmail(string email)
+    public async Task<User?> FindByEmail(string email)
     {
-        var user = _dbContext.Users.FirstOrDefault(u => u.Email == email);
+        var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == email);
         return user;
     }
 
-    public void Add(User user)
+    public async void Add(User user)
     {
-        _dbContext.Users.Add(user);
-        _dbContext.SaveChanges();
+        await _dbContext.Users.AddAsync(user);
+        await _dbContext.SaveChangesAsync();
     }
 }

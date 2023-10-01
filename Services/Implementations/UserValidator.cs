@@ -1,59 +1,37 @@
 using System.Text.RegularExpressions;
-using SSO.BL;
+using SSO.Bl.Interfaces;
 using SSO.Services.Interfaces;
 
 namespace SSO.Services.Implementations;
 
 public class UserValidator : IUserValidator
 {
+    //CommonRules
+    private const int MaxLength = 50;
+    
     //PasswordRegex
-    private const int RequiredLenght = 8;
+    private const int RequiredLength = 8;
     private const string RequiredLettersPattern = @"[A-Z]";
     private const string RequiredSymbolsPattern = @"[!@#$%^&*()]";
     private const string RequiredDigitsPattern = @"\d";
 
     //EmailRegex
     private const string RequiredEmailPattern = @"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b";
-
+    
+    //RolePattern
+    private static readonly string[] RequiredRole = { "client", "rentor"};
 
     public Task<Result> Validate(IModel model)
     {
-        // if (model == null)
-        // {
-        //     return Task.FromResult(Result.Failed(
-        //         new Error
-        //         {
-        //             Code = "PasswordIsRequired"
-        //         }));
-        // }
-        // if (model.Password == null)
-        // {
-        //     return Task.FromResult(Result.Failed(
-        //         new Error
-        //         {
-        //             Code = "PasswordIsRequired"
-        //         }));
-        // }
-        //
-        // if (model.Email == null)
-        // {
-        //     return Task.FromResult(Result.Failed(
-        //         new Error
-        //         {
-        //             Code = "EmailIsNull"
-        //         }
-        //     ));
-        // }
+        List<Error> errors = new List<Error>();
 
-        List<IError> errors = new List<IError>();
-
-        if (model.Password.Length < RequiredLenght)
+        if (model.Password.Length < RequiredLength)
         {
             errors.Add(
                 new Error
                 {
                     Code = "PasswordTooShort",
-                    Message = "The password must contain at least 8 characters"
+                    Message = "The Password must contain at least 8 characters"
                 }
             );
         }
@@ -64,7 +42,7 @@ public class UserValidator : IUserValidator
                 new Error
                 {
                     Code = "PasswordMissingUppercase",
-                    Message = "The password must contain at least one capital letter"
+                    Message = "The Password must contain at least one capital letter"
                 }
             );
         }
@@ -75,7 +53,7 @@ public class UserValidator : IUserValidator
                 new Error
                 {
                     Code = "PasswordMissingSpecialCharacter",
-                    Message = "The password must contain at least one special character"
+                    Message = "The Password must contain at least one special character"
                 }
             );
         }
@@ -86,7 +64,7 @@ public class UserValidator : IUserValidator
                 new Error
                 {
                     Code = "PasswordMissingDigit",
-                    Message = "The password must contain at least one digit"
+                    Message = "The Password must contain at least one digit"
                 }
             );
         }
@@ -97,9 +75,46 @@ public class UserValidator : IUserValidator
                 new Error
                 {
                     Code = "InvalidEmailFormat",
-                    Message = "The email format is not valid"
+                    Message = "The Email format is not valid"
                 }
             );
+        }
+        
+        if (!RequiredRole.Contains(model.Role))
+        {
+            errors.Add(new Error
+            {
+                Code = "InvalidRole",
+                Message = "The Role is not valid"
+            });
+        }
+
+        if (model.Name.Length > MaxLength)
+        {
+            errors.Add(new Error
+            {
+                Code = "NameIsTooLong",
+                Message = "The Name is longer than 50 characters"
+            });
+        }
+        
+        if (model.Password.Length > MaxLength)
+        {
+            errors.Add(new Error
+            {
+                Code = "PasswordIsTooLong",
+                Message = "The Password is longer than 50 characters"
+            });
+        }
+        
+        
+        if (model.Email.Length > MaxLength)
+        {
+            errors.Add(new Error
+            {
+                Code = "EmailIsTooLong",
+                Message = "The Email is longer than 50 characters"
+            });
         }
 
         return Task.FromResult(errors.Count == 0

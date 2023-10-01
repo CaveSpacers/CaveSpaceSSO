@@ -1,7 +1,7 @@
 namespace SSO.Services;
 
-public class Error : IError
+public record Error
 {
-    public string? Code { get; set; }
+    public string Code { get; init; }
     public string? Message { get; set; }
 }

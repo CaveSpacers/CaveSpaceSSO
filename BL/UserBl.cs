@@ -1,5 +1,6 @@
 using SSO.DAL.Interfaces;
 using SSO.DAL.Models;
+using SSO.Bl.Interfaces;
 using SSO.Services;
 using SSO.Services.Interfaces;
 
@@ -18,16 +19,6 @@ public class UserBl : IUserBl
 
     public Task<Result> CreateUser(IModel model)
     {
-        if (model == null)
-        {
-            return Task.FromResult(Result.Failed(
-                new Error
-                {
-                    Code = "Request is empty"
-                }
-            ));
-        }
-
         var validationResults = _userValidator.Validate(model).Result;
 
         if (!validationResults.Succeeded)
@@ -45,29 +36,9 @@ public class UserBl : IUserBl
             PasswordHash = passwordHash,
             Role = model.Role
         };
+        
+        _userDal.Add(user);
 
-        try
-        {
-            _userDal.Add(user);
-            return Task.FromResult(Result.Success());
-        }
-        catch (Exception e)
-        {
-            var error = new Error
-            {
-                Code = "FailedToCreateUser",
-                Message = e.Message
-            };
-            return Task.FromResult(Result.Failed(error));
-        }
+        return Task.FromResult(Result.Success());
     }
-
-    // public User? GetUser()
-    // {
-    //     _model
-    // }
-
-    // public Task<Result> Authorization()
-    // {
-    // }
 }
