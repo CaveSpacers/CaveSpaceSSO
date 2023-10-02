@@ -39,13 +39,7 @@ public class Startup
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
         app.UseMiddleware<RegistryMiddleware>();
-        app.UseStaticFiles();
-
         app.UseRouting();
-
-        app.UseAuthentication();
-        app.UseAuthorization();
-
         app.UseEndpoints(endpoints =>
             endpoints.MapControllers());
     }

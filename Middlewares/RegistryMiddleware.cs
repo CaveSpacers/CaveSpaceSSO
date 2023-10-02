@@ -20,11 +20,14 @@ public class RegistryMiddleware
         catch (Exception exception)
         {
             Console.WriteLine(exception.Message);
-            
+
             var error = new Error
-            {
-                Code = "FailedToCreateUser"
-            };
+            (
+                "FailedToCreateUser",
+                "Unexpected error during operation"
+            );
+
+            httpContext.Response.StatusCode = 400;
 
             await httpContext.Response.WriteAsJsonAsync(error);
         }

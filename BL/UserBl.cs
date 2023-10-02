@@ -1,6 +1,7 @@
 using SSO.DAL.Interfaces;
 using SSO.DAL.Models;
 using SSO.Bl.Interfaces;
+using SSO.Controllers.Models;
 using SSO.Services;
 using SSO.Services.Interfaces;
 
@@ -17,16 +18,24 @@ public class UserBl : IUserBl
         _userDal = userDal;
     }
 
-    public Task<Result> CreateUser(IModel model)
+    public async Task<Result> CreateUser(IModel model)
     {
         var validationResults = _userValidator.Validate(model).Result;
 
-        if (!validationResults.Succeeded)
+        if (validationResults.IsBadRequest)
         {
-            return Task.FromResult(validationResults);
+            return await Task.FromResult(validationResults);
         }
 
-        string passwordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
+        var userRecord = await _userDal.FindByEmail(model.Email);
+
+        if (userRecord != null)
+        {
+            return await Task.FromResult(Result.Conflict(new Error("UserAlreadyExist",
+                "User with current email already exist")));
+        }
+
+        var passwordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
 
         var user = new User
         {
@@ -36,9 +45,9 @@ public class UserBl : IUserBl
             PasswordHash = passwordHash,
             Role = model.Role
         };
-        
-        _userDal.Add(user);
 
-        return Task.FromResult(Result.Success());
+        await _userDal.Add(user);
+
+        return await Task.FromResult(Result.Success());
     }
 }

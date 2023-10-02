@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SSO.Controllers.Models;
 using SSO.Handlers.Interfaces;
+using SSO.Services;
 
 namespace SSO.Controllers;
 
@@ -17,19 +18,16 @@ public class AccountController : Controller
     [HttpPost("registry")]
     public async Task<IActionResult> Registry([FromBody] RegistryModel model)
     {
-        if (!ModelState.IsValid)
-        {
-            var error = ModelState.Where(entry => entry.Value.Errors.Any())
-                .Select(entry => new { Code = entry.Key, Description = entry.Value.Errors.First().ErrorMessage })
-                .ToList();
-            return BadRequest(error);
-        }
+        if (!ModelState.IsValid) return BadRequest(new Error("ModelException", "Invalid model in request"));
+        
+        var result = await _registryHandler.Registry(model);
 
-        var result = _registryHandler.Registry(model).Result;
+        if (result.IsSucceeded) return Ok();
+        
+        if (result.IsBadRequest) return BadRequest(result.Errors());
 
-        if (result.Succeeded) return Ok();
+        if (result.IsConflict) return Conflict(result.Errors());
 
-        var errors = result.Errors().Select(e => new { e.Code, Description = e.Message });
-        return BadRequest(errors);
+        return StatusCode(500);
     }
 }
