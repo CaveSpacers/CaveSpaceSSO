@@ -19,7 +19,7 @@ public class UserValidator : IUserValidator
     private const string RequiredEmailPattern = @"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b";
     
     //RolePattern
-    private static readonly string[] RequiredRole = { "client", "rentor"};
+    private static readonly string[] RequiredRole = { "client", "renter"};
 
     public Task<Result> Validate(IModel model)
     {
