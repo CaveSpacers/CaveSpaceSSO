@@ -1,6 +1,7 @@
 using SSO.Bl.Interfaces;
 using SSO.Handlers.Interfaces;
 using SSO.Services;
+using SSO.Controllers.Models;
 
 namespace SSO.Handlers.Implementations;
 
@@ -13,9 +14,9 @@ public class RegistryHandler: IRegistryHandler
         _userBl = userBl;
     }
 
-    public Task<Result> Registry(IModel model)
+    public async Task<Result> Registry(IModel model)
     {
-        var result = _userBl.CreateUser(model);
+        var result = await _userBl.CreateUser(model);
 
         return result;
     }

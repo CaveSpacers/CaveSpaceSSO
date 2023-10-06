@@ -20,7 +20,7 @@ public class UserDal : IUserDal
         return user;
     }
 
-    public async void Add(User user)
+    public async Task Add(User user)
     {
         await _dbContext.Users.AddAsync(user);
         await _dbContext.SaveChangesAsync();

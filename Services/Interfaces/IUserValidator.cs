@@ -1,4 +1,4 @@
-using SSO.Bl.Interfaces;
+using SSO.Controllers.Models;
 
 namespace SSO.Services.Interfaces;
 
