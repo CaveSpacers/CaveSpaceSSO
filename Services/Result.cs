@@ -8,6 +8,8 @@ public struct Result
 
     private List<Error> _errors;
 
+    private IResponse _response;
+
     public Result()
     {
         IsSucceeded = false;
@@ -18,6 +20,15 @@ public struct Result
         return new Result
         {
             IsSucceeded = true
+        };
+    }
+
+    public static Result SuccessWithBody(IResponse response)
+    {
+        return new Result
+        {
+            IsSucceeded = true,
+            _response = response
         };
     }
 
@@ -34,5 +45,10 @@ public struct Result
     public IEnumerable<Error> Errors()
     {
         return _errors.ToArray();
+    }
+    
+    public IResponse Response()
+    {
+        return _response;
     }
 }

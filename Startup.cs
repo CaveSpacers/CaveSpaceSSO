@@ -6,7 +6,7 @@ using SSO.Handlers.Implementations;
 using SSO.Handlers.Interfaces;
 using SSO.Bl.Interfaces;
 using SSO.Middlewares;
-using SSO.Models;
+using SSO.DAL;
 using SSO.Services.Implementations;
 using SSO.Services.Interfaces;
 
@@ -32,6 +32,7 @@ public class Startup
         services.AddScoped<IUserDal, UserDal>();
         services.AddScoped<IUserBl, UserBl>();
         services.AddScoped<IRegistryHandler, RegistryHandler>();
+        services.AddScoped<ILoginHandler, LoginHandler>();
 
         services.AddControllers();
     }

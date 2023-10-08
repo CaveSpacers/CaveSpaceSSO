@@ -15,17 +15,10 @@ services:
       POSTGRES_DB: "sso-postgres"
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "postgres"
-      PGDATA: /data/postgres
-    volumes:
-      - postgres-db:/data/postgres
     ports:
       - "5432:5432"
     networks:
       - app
-
-volumes:
-  postgres-db:
-    driver: local
 
 networks:
   app:

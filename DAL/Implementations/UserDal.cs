@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SSO.DAL.Interfaces;
 using SSO.DAL.Models;
-using SSO.Models;
 
 namespace SSO.DAL.Implementations;
 
@@ -23,6 +22,24 @@ public class UserDal : IUserDal
     public async Task Add(User user)
     {
         await _dbContext.Users.AddAsync(user);
+        await _dbContext.SaveChangesAsync();
+    }
+
+    public async Task<Token?> GetTokenByUserId(string userId)
+    {
+        var token = await _dbContext.Tokens.FirstOrDefaultAsync(t => t.UserId == userId);
+        return token;
+    }
+
+    public async Task AddToken(Token token)
+    {
+        await _dbContext.Tokens.AddAsync(token);
+        await _dbContext.SaveChangesAsync();
+    }
+
+    public async Task UpdateToken(Token token)
+    {
+        _dbContext.Entry(token).State = EntityState.Modified;
         await _dbContext.SaveChangesAsync();
     }
 }
