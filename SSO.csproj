@@ -15,8 +15,4 @@
       <Content Include=".docker\sso-app.Dockerfile" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="BL\Models\" />
-    </ItemGroup>
-
 </Project>

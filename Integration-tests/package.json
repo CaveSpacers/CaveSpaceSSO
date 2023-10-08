@@ -1,0 +1,15 @@
+{
+  "devDependencies": {
+    "@playwright/test": "^1.38.1",
+    "@types/node": "^20.8.0",
+    "chai": "^4.3.10",
+    "pg": "^8.11.3"
+  },
+  "scripts": {
+    "test:db": "../node_modules/.bin/playwright Integration-tests/test --config=playwright.config.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "uuid": "^9.0.1"
+  }
+}

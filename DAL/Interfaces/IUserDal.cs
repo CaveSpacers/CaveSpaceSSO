@@ -4,6 +4,6 @@ namespace SSO.DAL.Interfaces;
 
 public interface IUserDal
 {
-    public User? FindByEmail(string email);
-    public void Add(User user);
+    public Task<User?> FindByEmail(string email);
+    public Task Add(User user);
 }

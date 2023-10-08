@@ -2,36 +2,37 @@ namespace SSO.Services;
 
 public struct Result
 {
-    public bool Succeeded { get; set; }
+    public bool IsSucceeded { get; set; }
+    public bool IsConflict { get; set; }
+    public bool IsBadRequest { get; set; }
 
-    private readonly List<IError> _errors = new();
+    private List<Error> _errors;
 
     public Result()
     {
-        Succeeded = false;
+        IsSucceeded = false;
     }
 
     public static Result Success()
     {
         return new Result
         {
-            Succeeded = true
+            IsSucceeded = true
         };
     }
 
-    public static Result Failed(params IError[]? errors)
+    public static Result BadRequest(params Error[]? errors)
     {
-        var result = new Result { Succeeded = false };
-        if (errors != null)
-        {
-            result._errors.AddRange(errors);
-        }
-
-        return result;
+        return new Result { IsBadRequest = true, _errors = errors?.ToList() ?? new List<Error>() };
     }
 
-    public IEnumerable<IError> Errors()
+    public static Result Conflict(params Error[]? errors)
     {
-        return _errors;
+        return new Result { IsConflict = true, _errors = errors?.ToList() ?? new List<Error>() };
+    }
+
+    public IEnumerable<Error> Errors()
+    {
+        return _errors.ToArray();
     }
 }

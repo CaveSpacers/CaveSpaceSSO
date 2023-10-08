@@ -1,5 +1,7 @@
 using SSO.DAL.Interfaces;
 using SSO.DAL.Models;
+using SSO.Bl.Interfaces;
+using SSO.Controllers.Models;
 using SSO.Services;
 using SSO.Services.Interfaces;
 
@@ -16,58 +18,36 @@ public class UserBl : IUserBl
         _userDal = userDal;
     }
 
-    public Task<Result> CreateUser(IModel model)
+    public async Task<Result> CreateUser(IModel model)
     {
-        if (model == null)
-        {
-            return Task.FromResult(Result.Failed(
-                new Error
-                {
-                    Code = "Request is empty"
-                }
-            ));
-        }
-
         var validationResults = _userValidator.Validate(model).Result;
 
-        if (!validationResults.Succeeded)
+        if (validationResults.IsBadRequest)
         {
-            return Task.FromResult(validationResults);
+            return await Task.FromResult(validationResults);
         }
 
-        string passwordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
+        var userRecord = await _userDal.FindByEmail(model.Login);
+
+        if (userRecord != null)
+        {
+            return await Task.FromResult(Result.Conflict(new Error("UserAlreadyExist",
+                "User with current email already exist")));
+        }
+
+        var passwordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
 
         var user = new User
         {
             UserId = Guid.NewGuid().ToString(),
             Name = model.Name,
-            Email = model.Email,
+            Login = model.Login,
             PasswordHash = passwordHash,
             Role = model.Role
         };
 
-        try
-        {
-            _userDal.Add(user);
-            return Task.FromResult(Result.Success());
-        }
-        catch (Exception e)
-        {
-            var error = new Error
-            {
-                Code = "FailedToCreateUser",
-                Message = e.Message
-            };
-            return Task.FromResult(Result.Failed(error));
-        }
+        await _userDal.Add(user);
+
+        return await Task.FromResult(Result.Success());
     }
-
-    // public User? GetUser()
-    // {
-    //     _model
-    // }
-
-    // public Task<Result> Authorization()
-    // {
-    // }
 }
