@@ -19,7 +19,7 @@ public class UserValidator : IUserValidator
     private const string RequiredEmailPattern = @"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b";
 
     //RolePattern
-    private static readonly string[] RequiredRole = { "client", "rentor" };
+    private static readonly string[] RequiredRole = { "client", "renter"};
 
     public Task<Result> Validate(RegistryModel model)
     {
@@ -46,7 +46,7 @@ public class UserValidator : IUserValidator
             errors.Add(new Error("PasswordMissingDigit", "The Password must contain at least one digit"));
         }
 
-        if (!Regex.IsMatch(model.Email, RequiredEmailPattern))
+        if (!Regex.IsMatch(model.Login, RequiredEmailPattern))
         {
             errors.Add(new Error("InvalidEmailFormat", "The Email format is not valid"));
         }
@@ -66,7 +66,7 @@ public class UserValidator : IUserValidator
             errors.Add(new Error("PasswordIsTooLong", "The Password is longer than 50 characters"));
         }
 
-        if (model.Email.Length > MaxLength)
+        if (model.Login.Length > MaxLength)
         {
             errors.Add(new Error("EmailIsTooLong", "The Email is longer than 50 characters"));
         }

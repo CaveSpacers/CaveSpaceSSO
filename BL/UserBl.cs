@@ -27,7 +27,7 @@ public class UserBl : IUserBl
             return await Task.FromResult(validationResults);
         }
 
-        var userRecord = await _userDal.FindByEmail(model.Email);
+        var userRecord = await _userDal.FindByEmail(model.Login);
 
         if (userRecord != null)
         {
@@ -42,7 +42,7 @@ public class UserBl : IUserBl
         {
             UserId = Guid.NewGuid().ToString(),
             Name = model.Name,
-            Email = model.Email,
+            Login = model.Login,
             PasswordHash = passwordHash,
             Role = model.Role
         };

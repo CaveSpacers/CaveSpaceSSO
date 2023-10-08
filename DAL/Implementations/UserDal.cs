@@ -15,7 +15,7 @@ public class UserDal : IUserDal
 
     public async Task<User?> FindByEmail(string email)
     {
-        var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == email);
+        var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Login == email);
         return user;
     }
 
