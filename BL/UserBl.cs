@@ -54,7 +54,7 @@ public class UserBl : IUserBl
 
     public async Task<Result> GetAccessToken(LoginModel model)
     {
-        var userRecord = await _userDal.FindByEmail(model.Email);
+        var userRecord = await _userDal.FindByEmail(model.Login);
         if (userRecord == null)
         {
             return await Task.FromResult(Result.BadRequest(
