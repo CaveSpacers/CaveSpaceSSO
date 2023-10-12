@@ -1,32 +1,74 @@
 const {test, expect} = require('@playwright/test');
-const {getUserByEmail, insertUser} = require('../main/db-utils');
+const {getUserByEmail, getTokenByUserId, insertUser} = require('../main/db-utils');
 const uuid = require('uuid');
+const bcrypt = require('bcryptjs');
 
-test.describe.parallel("Login testing", () => {
+
+test.describe.parallel("Login testing", async () => {
     const baseUrl = 'http://localhost:8080';
     const validUserData = {
+        userId: uuid.v4(),
         name: 'LoginSeva',
         login: 'sevalogin@gmail.com',
         password: 'login1A!a',
         role: 'renter',
     };
-
-    test(`POST - login with valid credentials`, async ({ request }) => {
+    await insertUser(validUserData);
+    test(`POST - login with valid credentials`, async ({request}) => {
         const loginUserData = {
             login: 'sevalogin@gmail.com',
             password: 'login1A!a',
         };
-        await request.post(`${baseUrl}/api/v1/registry`, {
-            data: validUserData,
+
+        const response = await request.post(`${baseUrl}/api/v1/login`, {
+            data: loginUserData,
         });
+        expect(response.status()).toBe(200);
+
+        const responseBody = JSON.parse(await response.text());
+        expect(responseBody.accessToken).toBeTruthy();
+
+        const user = await getUserByEmail(loginUserData.login);
+        expect(user.UserId).toBeTruthy();
+
+        const tokenData = getTokenByUserId(user.UserId);
+        expect(tokenData.TokenHash).toBe(bcrypt.hashSync(responseBody.accessToken);
+
+        const expirationTimeInMillis = new Date(tokenData.ExpiredDateTime).getTime();
+        const currentTimeInMillis = Date.now();
+        const timeDifference = expirationTimeInMillis - currentTimeInMillis;
+
+        expect(timeDifference).toBeCloseTo(900000, {delta: 10000});
+    });
+
+    test(`POST - login with invalid password`, async ({request}) => {
+        const loginUserData = {
+            login: 'sevalogin@gmail.com',
+            password: 'login1A!a2',
+        };
+
         const response = await request.post(`${baseUrl}/api/v1/login`, {
             data: loginUserData,
         });
         expect(response.status()).toBe(400);
 
         const responseBody = JSON.parse(await response.text());
-        //expect(responseBody[0].code).toBe("UserAlreadyExist");
-    });
+        expect(responseBody.code).toBe("Bad Request");
+
+        test(`POST - login with invalid login`, async ({request}) => {
+            const loginUserData = {
+                login: 'sevalogin1@gmail.com',
+                password: 'login1A!a',
+            };
+
+            const response = await request.post(`${baseUrl}/api/v1/login`, {
+                data: loginUserData,
+            });
+            expect(response.status()).toBe(400);
+
+            const responseBody = JSON.parse(await response.text());
+            expect(responseBody.code).toBe("Bad Request");
+    //expect(responseBody[0].code).toBe("UserAlreadyExist");
     // test(`POST - create new user with role client`, async ({request}) => {
     //     const userData = {
     //         name: 'Max', login: 'max@gmail.com', password: '1q2w!aA123', role: 'client'

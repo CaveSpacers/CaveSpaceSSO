@@ -15,10 +15,22 @@ const disconnectFromDatabase = async (client) => {
 };
 const getUserByEmail = async (login) => {
     const client = await connectToDatabase()
-
     try {
         const query = 'SELECT * FROM "Users" WHERE "Login" = $1';
         const {rows} = await client.query(query, [login]);
+        return rows;
+    } catch (error) {
+        console.error('Error:', error);
+        return [];
+    } finally {
+        await disconnectFromDatabase(client);
+    }
+};
+const getTokenByUserId = async (userId) => {
+    const client = await connectToDatabase()
+    try {
+        const query = 'SELECT * FROM "Tokens" WHERE "UserId" = $1';
+        const {rows} = await client.query(query, [userId]);
         return rows;
     } catch (error) {
         console.error('Error:', error);
@@ -43,5 +55,5 @@ const insertUser = async (userData) => {
     }
 };
 module.exports = {
-    connectToDatabase, disconnectFromDatabase, getUserByEmail, insertUser
+    connectToDatabase, disconnectFromDatabase, getUserByEmail, insertUser, getTokenByUserId
 };
