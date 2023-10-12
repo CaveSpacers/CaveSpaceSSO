@@ -70,6 +70,33 @@ test.describe.parallel("Login testing",() => {
             const responseBody = JSON.parse(await response.text());
             expect(responseBody[0].code).toBe("InvalidCredentials");;
         });
+    test(`POST - token expiration update`, async ({request}) => {
+        const loginUserData = {
+            login: 'sevalogin@gmail.com',
+            password: 'login1A!a',
+        };
+
+        const response1 = await request.post(`${baseUrl}/api/v1/login`, {
+            data: loginUserData,
+        });
+        expect(response1.status()).toBe(200);
+
+        const responseBody1 = JSON.parse(await response1.text());
+        expect(responseBody1.accessToken).toBeTruthy();
+
+        const user = await getUserByEmail(loginUserData.login);
+        const tokenData1 = getTokenByUserId(user.UserId);
+        const expirationTimeInMillis1 = new Date(tokenData1.ExpiredDateTime).getTime();
+
+        const response2 = await request.post(`${baseUrl}/api/v1/login`, {
+            data: loginUserData,
+        });
+        expect(response1.status()).toBe(200);
+        const tokenData2 = getTokenByUserId(user.UserId);
+        const expirationTimeInMillis2 = new Date(tokenData1.ExpiredDateTime).getTime();
+
+        expect(expirationTimeInMillis1).not.toBe(expirationTimeInMillis2);
+    });
     //expect(responseBody[0].code).toBe("UserAlreadyExist");
     // test(`POST - create new user with role client`, async ({request}) => {
     //     const userData = {
