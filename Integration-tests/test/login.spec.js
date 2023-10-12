@@ -54,6 +54,7 @@ test.describe.parallel("Login testing", async () => {
 
         const responseBody = JSON.parse(await response.text());
         expect(responseBody.code).toBe("Bad Request");
+    });
 
         test(`POST - login with invalid login`, async ({request}) => {
             const loginUserData = {
@@ -68,6 +69,7 @@ test.describe.parallel("Login testing", async () => {
 
             const responseBody = JSON.parse(await response.text());
             expect(responseBody.code).toBe("Bad Request");
+        });
     //expect(responseBody[0].code).toBe("UserAlreadyExist");
     // test(`POST - create new user with role client`, async ({request}) => {
     //     const userData = {
