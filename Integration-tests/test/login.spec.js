@@ -4,7 +4,7 @@ const uuid = require('uuid');
 const bcrypt = require('bcryptjs');
 
 
-test.describe.parallel("Login testing", async () => {
+test.describe.parallel("Login testing",() => {
     const baseUrl = 'http://localhost:8080';
     const validUserData = {
         userId: uuid.v4(),
@@ -13,7 +13,7 @@ test.describe.parallel("Login testing", async () => {
         password: 'login1A!a',
         role: 'renter',
     };
-    await insertUser(validUserData);
+    //await insertUser(validUserData);
     test(`POST - login with valid credentials`, async ({request}) => {
         const loginUserData = {
             login: 'sevalogin@gmail.com',
@@ -53,7 +53,7 @@ test.describe.parallel("Login testing", async () => {
         expect(response.status()).toBe(400);
 
         const responseBody = JSON.parse(await response.text());
-        expect(responseBody.code).toBe("Bad Request");
+        expect(responseBody[0].code).toBe("InvalidCredentials");
     });
 
         test(`POST - login with invalid login`, async ({request}) => {
@@ -68,7 +68,7 @@ test.describe.parallel("Login testing", async () => {
             expect(response.status()).toBe(400);
 
             const responseBody = JSON.parse(await response.text());
-            expect(responseBody.code).toBe("Bad Request");
+            expect(responseBody[0].code).toBe("InvalidCredentials");;
         });
     //expect(responseBody[0].code).toBe("UserAlreadyExist");
     // test(`POST - create new user with role client`, async ({request}) => {
