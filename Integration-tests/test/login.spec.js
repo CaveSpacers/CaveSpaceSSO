@@ -32,7 +32,7 @@ test.describe.parallel("Login testing", async () => {
         expect(user.UserId).toBeTruthy();
 
         const tokenData = getTokenByUserId(user.UserId);
-        expect(tokenData.TokenHash).toBe(bcrypt.hashSync(responseBody.accessToken);
+        expect(tokenData.TokenHash).toBe(bcrypt.hashSync(responseBody.accessToken));
 
         const expirationTimeInMillis = new Date(tokenData.ExpiredDateTime).getTime();
         const currentTimeInMillis = Date.now();
