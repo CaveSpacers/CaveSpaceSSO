@@ -44,7 +44,6 @@ const insertUser = async (userData) => {
     const insertQuery = `
     INSERT INTO "Users" ("UserId","Name", "Login", "PasswordHash", "Role")
     VALUES ($1, $2, $3, $4, $5)`;
-
     try {
         await client.query(insertQuery, [userData.userId, userData.name, userData.login, userData.password, userData.role,]);
     } catch (error) {
