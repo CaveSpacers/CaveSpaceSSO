@@ -1,5 +1,5 @@
 const {test, expect} = require('@playwright/test');
-const {getUserByEmail, insertUser} = require('../main/db-utils');
+const {getUserByLogin, insertUser} = require('../main/db-utils');
 const uuid = require('uuid');
 
 test.describe.parallel("Registration testing", () => {
@@ -15,7 +15,7 @@ test.describe.parallel("Registration testing", () => {
 
         expect(response.status()).toBe(200);
 
-        const users = await getUserByEmail(userData.login);
+        const users = await getUserByLogin(userData.login);
         expect(users.length).toBe(1);
         expect(users[0].Name).toBe(userData.name);
         expect(users[0].Role).toBe(userData.role);
@@ -30,7 +30,7 @@ test.describe.parallel("Registration testing", () => {
 
         expect(response.status()).toBe(200);
 
-        const users = await getUserByEmail(userData.login);
+        const users = await getUserByLogin(userData.login);
         expect(users.length).toBe(1);
         expect(users[0].Name).toBe(userData.name);
         expect(users[0].Role).toBe(userData.role);

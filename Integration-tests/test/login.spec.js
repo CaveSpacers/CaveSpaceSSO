@@ -1,5 +1,5 @@
 const {test, expect} = require('@playwright/test');
-const {getUserByEmail, getTokenByUserId} = require('../main/db-utils');
+const {getUserByLogin, getTokenByUserId} = require('../main/db-utils');
 
 
 test.describe.parallel("Login testing", () => {
@@ -35,11 +35,10 @@ test.describe.parallel("Login testing", () => {
         const responseBody = JSON.parse(await response.text());
         expect(responseBody.accessToken).toBeTruthy();
 
-        const user = await getUserByEmail(loginUserData.login);
-        expect(user[0].UserId).toBeTruthy();
+        const user = await getUserByLogin(loginUserData.login);
 
         const tokenData = await getTokenByUserId(user[0].UserId);
-        expect(tokenData[0].TokenHash).toBe(responseBody.accessToken);
+        expect(tokenData[0].Token).toBe(responseBody.accessToken);
 
         const expirationTimeInMillis = new Date(tokenData[0].ExpiredDateTime).getTime();
         const currentTimeInMillis = Date.now();
@@ -95,7 +94,7 @@ test.describe.parallel("Login testing", () => {
         const responseBodyFirst = JSON.parse(await responseFirst.text());
         expect(responseBodyFirst.accessToken).toBeTruthy();
 
-        const user = await getUserByEmail(loginUserData.login);
+        const user = await getUserByLogin(loginUserData.login);
         const tokenDataFirst = await getTokenByUserId(user[0].UserId);
         const expirationTimeInMillisFirst = new Date(tokenDataFirst[0].ExpiredDateTime).getTime();
 

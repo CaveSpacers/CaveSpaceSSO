@@ -13,7 +13,7 @@ const connectToDatabase = async () => {
 const disconnectFromDatabase = async (client) => {
     await client.end();
 };
-const getUserByEmail = async (login) => {
+const getUserByLogin = async (login) => {
     const client = await connectToDatabase()
     try {
         const query = 'SELECT * FROM "Users" WHERE "Login" = $1';
@@ -54,5 +54,5 @@ const insertUser = async (userData) => {
     }
 };
 module.exports = {
-    connectToDatabase, disconnectFromDatabase, getUserByEmail, insertUser, getTokenByUserId
+    getUserByLogin, insertUser, getTokenByUserId
 };
