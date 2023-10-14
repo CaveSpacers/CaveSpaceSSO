@@ -5,6 +5,7 @@ using SSO.DAL.Interfaces;
 using SSO.Handlers.Implementations;
 using SSO.Handlers.Interfaces;
 using SSO.Bl.Interfaces;
+using SSO.Configuration;
 using SSO.Middlewares;
 using SSO.DAL;
 using SSO.Services.Implementations;
@@ -39,6 +40,7 @@ public class Startup
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
+        app.ConfigureDateStorage<ApplicationContext>();
         app.UseMiddleware<RegistryMiddleware>();
         app.UseRouting();
         app.UseEndpoints(endpoints =>

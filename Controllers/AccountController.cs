@@ -20,6 +20,7 @@ public class AccountController : Controller
     [HttpPost("registry")]
     public async Task<IActionResult> Registry([FromBody] RegistryModel model)
     {
+        //вынести все это в отдельный мидлвейр
         if (!ModelState.IsValid) return BadRequest(new Error("ModelException", "Invalid model in request"));
         
         var result = await _registryHandler.Registry(model);
