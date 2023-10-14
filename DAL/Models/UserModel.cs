@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace SSO.DAL.Models;
 
-public class User
+public class UserModel
 {
     [Key]
     public string UserId { get; set; }
@@ -10,5 +10,5 @@ public class User
     public string Login { get; set; }
     public string PasswordHash { get; set; }
     public string Role { get; set; }
-    public Token Token { get; set; }
+    public TokenModel TokenModel { get; set; }
 }

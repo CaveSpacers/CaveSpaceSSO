@@ -4,13 +4,13 @@ namespace SSO.DAL.Interfaces;
 
 public interface IUserDal
 {
-    public Task<User?> FindByEmail(string email);
-    public Task Add(User user);
+    public Task<UserModel?> FindByEmail(string email);
+    public Task Add(UserModel userModel);
 
-    public Task<Token?> GetTokenByUserId(string userId);
+    public Task<TokenModel?> GetTokenByUserId(string userId);
 
-    public Task AddToken(Token token);
+    public Task AddToken(TokenModel tokenModel);
 
-    public Task UpdateToken(Token token);
+    public Task UpdateToken(TokenModel tokenModel);
 
 }
