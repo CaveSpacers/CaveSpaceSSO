@@ -1,6 +1,7 @@
 const {test, expect} = require('@playwright/test');
 const {getUserByLogin, insertUser} = require('../main/db-utils');
 const uuid = require('uuid');
+const {generatePasswordHash} = require("../main/utils");
 
 test.describe.parallel("Registration testing", () => {
     const baseUrl = 'http://localhost:8080';
@@ -35,8 +36,10 @@ test.describe.parallel("Registration testing", () => {
     });
 
     test('POST - create same email user', async ({request}) => {
+        const plainPassword = "1q2w!aA123";
+        const passHash = await generatePasswordHash(plainPassword);
         const existingUserData = {
-            userId: uuid.v4(), name: 'Max', login: 'max2@gmail.com', password: '1q2w!aA123', role: 'renter',
+            UserId: uuid.v4(), Name: 'Max', Login: 'max2@gmail.com', PasswordHash: passHash, role: 'renter',
         };
         const newUserWithSameEmail = {
             name: 'Fake Max', login: 'max2@gmail.com', password: '1q2w!aA123', role: 'renter',
