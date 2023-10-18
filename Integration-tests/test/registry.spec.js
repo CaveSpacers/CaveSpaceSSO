@@ -16,9 +16,8 @@ test.describe.parallel("Registration testing", () => {
         expect(response.status()).toBe(200);
 
         const users = await getUserByLogin(userData.login);
-        expect(users.length).toBe(1);
-        expect(users[0].Name).toBe(userData.name);
-        expect(users[0].Role).toBe(userData.role);
+        expect(users.Name).toBe(userData.name);
+        expect(users.Role).toBe(userData.role);
     });
     test(`POST - create new user with role client`, async ({request}) => {
         const userData = {
@@ -31,9 +30,8 @@ test.describe.parallel("Registration testing", () => {
         expect(response.status()).toBe(200);
 
         const users = await getUserByLogin(userData.login);
-        expect(users.length).toBe(1);
-        expect(users[0].Name).toBe(userData.name);
-        expect(users[0].Role).toBe(userData.role);
+        expect(users.Name).toBe(userData.name);
+        expect(users.Role).toBe(userData.role);
     });
 
     test('POST - create same email user', async ({request}) => {
