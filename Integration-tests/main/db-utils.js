@@ -14,7 +14,7 @@ const connectToDatabase = async () => {
 const disconnectFromDatabase = async (client) => {
     await client.end();
 };
-const getUserByLogin = async (Login) => {
+const getUserRecordByLogin = async (Login) => {
     const client = await connectToDatabase();
     try {
         const query = 'SELECT * FROM "Users" WHERE "Login" = $1';
@@ -28,7 +28,7 @@ const getUserByLogin = async (Login) => {
         await disconnectFromDatabase(client);
     }
 };
-const getTokenByUserId = async (UserId) => {
+const getTokenRecordByUserId = async (UserId) => {
     const client = await connectToDatabase();
     try {
         const query = 'SELECT * FROM "Tokens" WHERE "UserId" = $1';
@@ -64,5 +64,5 @@ const insertUser = async (userData) => {
     }
 };
 module.exports = {
-    getUserByLogin, insertUser, getTokenByUserId
+    getUserByLogin: getUserRecordByLogin, insertUser, getTokenRecordByUserId
 };

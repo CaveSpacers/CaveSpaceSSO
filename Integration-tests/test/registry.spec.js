@@ -37,9 +37,12 @@ test.describe.parallel("Registration testing", () => {
 
     test('POST - create same email user', async ({request}) => {
         const plainPassword = "1q2w!aA123";
-        const passHash = await generatePasswordHash(plainPassword);
         const existingUserData = {
-            UserId: uuid.v4(), Name: 'Max', Login: 'max2@gmail.com', PasswordHash: passHash, role: 'renter',
+            UserId: uuid.v4(),
+            Name: 'Max',
+            Login: 'max2@gmail.com',
+            PasswordHash: await generatePasswordHash(plainPassword),
+            role: 'renter',
         };
         const newUserWithSameEmail = {
             name: 'Fake Max', login: 'max2@gmail.com', password: '1q2w!aA123', role: 'renter',
