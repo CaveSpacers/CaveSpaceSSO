@@ -3,7 +3,7 @@ const {getUserByEmail, insertUser} = require('../main/db-utils');
 const uuid = require('uuid');
 
 test.describe.parallel("Registration testing", () => {
-    const baseUrl = 'http://localhost:8080';
+    const baseUrl = 'http://sso-app:8080';
 
     test(`POST - create new user with role renter`, async ({request}) => {
         const userData = {

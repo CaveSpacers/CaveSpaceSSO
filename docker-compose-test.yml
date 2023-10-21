@@ -20,6 +20,7 @@ services:
     networks:
       - app
   sso-integration-tests:
+    #depends_on: [ sso-app ]
     build:
         dockerfile: .docker/sso-integration-tests.Dockerfile
     networks:
