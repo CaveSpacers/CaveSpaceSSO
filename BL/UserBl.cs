@@ -65,7 +65,7 @@ public class UserBl : IUserBl
         if (BCrypt.Net.BCrypt.Verify(model.Password, userRecord.PasswordHash))
         {
             var accessToken = Guid.NewGuid().ToString();
-            var tokenExpirationDateTime = DateTime.UtcNow.AddMinutes(10);
+            var tokenExpirationDateTime = DateTime.UtcNow.AddMinutes(15);
 
             var existingToken = await _userDal.GetTokenByUserId(userRecord.UserId);
             if (existingToken == null)

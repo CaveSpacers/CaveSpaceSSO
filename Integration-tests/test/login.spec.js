@@ -34,7 +34,10 @@ test.describe.parallel("Login testing", () => {
         const currentTimeInMillis = Date.now();
         const timeDifference = expirationTimeInMillis - currentTimeInMillis;
 
-        expect(timeDifference).toBeCloseTo(900000, {delta: 10000});
+        const expectedDifference = 900000;
+        const tolerance = 10000;
+
+        expect(Math.abs(timeDifference - expectedDifference)).toBeLessThanOrEqual(tolerance);
     });
 
     test(`POST - login with invalid password`, async ({request}) => {
@@ -109,7 +112,7 @@ test.describe.parallel("Login testing", () => {
         expect(responseFirst.status()).toBe(200);
 
         const tokenDataFirst = await getTokenRecordByUserId(userForDb.UserId);
-        const expirationTimeFirst = new Date(tokenDataFirst.ExpirationDateTime);
+        const expirationTimeFirst = tokenDataFirst.ExpirationDateTime;
 
         const responseSecond = await request.post(`${baseUrl}/api/v1/login`, {
             data: loginUserData,
@@ -118,10 +121,10 @@ test.describe.parallel("Login testing", () => {
         const responseSecondBody = JSON.parse(await responseSecond.text());
 
         const tokenDataSecond = await getTokenRecordByUserId(userForDb.UserId);
-        const expirationTimeSecond = new Date(tokenDataSecond.ExpirationDateTime);
+        const expirationTimeSecond = tokenDataSecond.ExpirationDateTime;
 
-        expect(expirationTimeFirst).not.toBe(expirationTimeSecond);
-        expect(tokenDataFirst.Token).not.toBe(tokenDataSecond.Token);
-        expect(tokenDataSecond.Token).toBe(responseSecondBody.accessToken);
+        expect(expirationTimeFirst).not.toEqual(expirationTimeSecond);
+        expect(tokenDataFirst.Token).not.toEqual(tokenDataSecond.Token);
+        expect(tokenDataSecond.Token).toEqual(responseSecondBody.accessToken);
     });
 });

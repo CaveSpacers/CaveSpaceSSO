@@ -23,7 +23,7 @@ public class RegistryMiddleware
 
             var error = new Error
             (
-                "FailedToCreateUser",
+                "UnexpectedError",
                 "Unexpected error during operation"
             );
 

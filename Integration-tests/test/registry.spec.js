@@ -42,7 +42,7 @@ test.describe.parallel("Registration testing", () => {
             Name: 'Max',
             Login: 'max2@gmail.com',
             PasswordHash: await generatePasswordHash(plainPassword),
-            role: 'renter',
+            Role: 'renter',
         };
         const newUserWithSameEmail = {
             name: 'Fake Max', login: 'max2@gmail.com', password: '1q2w!aA123', role: 'renter',
