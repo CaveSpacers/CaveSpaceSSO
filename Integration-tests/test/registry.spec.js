@@ -1,10 +1,11 @@
 const {test, expect} = require('@playwright/test');
 const {getUserByEmail, insertUser} = require('../main/db-utils');
 const uuid = require('uuid');
+const axios = require("axios");
 
 test.describe.parallel("Registration testing", () => {
-    const baseUrl = 'http://cavespace-sso-sso-app-1';
-
+    const baseUrl = 'http://sso-app:8080';
+    
     test(`POST - create new user with role renter`, async ({request}) => {
         const userData = {
             name: 'Seva', login: 'seva@gmail.com', password: '1q2w!aA123', role: 'renter',

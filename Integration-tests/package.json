@@ -9,6 +9,7 @@
     "test:db": "../node_modules/.bin/playwright Integration-tests/test --config=playwright.config.js"
   },
   "dependencies": {
+    "axios": "^1.5.1",
     "bcryptjs": "^2.4.3",
     "uuid": "^9.0.1"
   }

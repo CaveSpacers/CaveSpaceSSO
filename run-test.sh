@@ -1,3 +1,3 @@
 #!/bin/bash
-docker-compose -f docker-compose-test.yml build &&
-docker-compose -f docker-compose-test.yml up
+docker-compose -f docker-compose-local.yml --profile tests build &&
+docker-compose -f docker-compose-local.yml --profile tests up
