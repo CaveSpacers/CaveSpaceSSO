@@ -18,26 +18,27 @@ public class UserBl : IUserBl
         _userDal = userDal;
     }
 
-    public async Task<Result> CreateUser(IModel model)
+    public async Task<Result> CreateUser(RegistryModel model)
     {
         var validationResults = _userValidator.Validate(model).Result;
 
         if (validationResults.IsBadRequest)
         {
-            return await Task.FromResult(validationResults);
+            return validationResults;
         }
 
         var userRecord = await _userDal.FindByEmail(model.Login);
 
         if (userRecord != null)
         {
-            return await Task.FromResult(Result.Conflict(new Error("UserAlreadyExist",
-                "User with current email already exist")));
+            return Result.Conflict(
+                new Error("UserAlreadyExist",
+                    "The user with current email already exist"));
         }
 
-        var passwordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
+        var passwordHash = GeneratePasswordHash(model.Password);
 
-        var user = new User
+        var user = new UserModel
         {
             UserId = Guid.NewGuid().ToString(),
             Name = model.Name,
@@ -48,6 +49,54 @@ public class UserBl : IUserBl
 
         await _userDal.Add(user);
 
-        return await Task.FromResult(Result.Success());
+        return Result.Success();
+    }
+
+    public async Task<Result> GetAccessToken(LoginModel model)
+    {
+        var userRecord = await _userDal.FindByEmail(model.Login);
+        if (userRecord == null)
+        {
+            return Result.BadRequest(
+                new Error("InvalidCredentials",
+                    "Invalid email or password"));
+        }
+        
+        if (BCrypt.Net.BCrypt.Verify(model.Password, userRecord.PasswordHash))
+        {
+            var accessToken = Guid.NewGuid().ToString();
+            var tokenExpirationDateTime = DateTime.UtcNow.AddMinutes(15);
+
+            var existingToken = await _userDal.GetTokenByUserId(userRecord.UserId);
+            if (existingToken == null)
+            {
+                var newToken = new TokenModel
+                {
+                    UserId = userRecord.UserId,
+                    Token = accessToken,
+                    ExpirationDateTime = tokenExpirationDateTime
+                };
+
+                await _userDal.AddToken(newToken);
+            }
+            else
+            {
+                existingToken.Token = accessToken;
+                existingToken.ExpirationDateTime = tokenExpirationDateTime;
+                await _userDal.UpdateToken(existingToken);
+            }
+            
+            return Result.SuccessWithBody(
+                new LoginResponse(accessToken));
+        }
+
+        return Result.BadRequest(
+            new Error("InvalidCredentials",
+                "Invalid email or password"));
+    }
+
+    private string? GeneratePasswordHash(string password)
+    {
+        return BCrypt.Net.BCrypt.HashPassword(password);
     }
 }

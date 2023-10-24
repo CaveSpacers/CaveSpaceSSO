@@ -5,5 +5,6 @@ namespace SSO.Bl.Interfaces;
 
 public interface IUserBl
 {
-    public Task<Result> CreateUser(IModel model);
+    public Task<Result> CreateUser(RegistryModel model);
+    public Task<Result> GetAccessToken(LoginModel model);
 }
