@@ -10,7 +10,7 @@ test.describe.parallel("Registration testing", () => {
         const userData = {
             name: 'Seva', login: 'seva@gmail.com', password: '1q2w!aA123', role: 'renter',
         };
-        const response = await request.post(`${baseUrl}/api/v1/registry`, {
+        const response = await request.post(`/api/v1/registry`, {
             data: userData
         });
 
