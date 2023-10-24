@@ -3,7 +3,7 @@ using SSO.Services;
 
 namespace SSO.Handlers.Interfaces;
 
-public interface IRegistryHandler
+public interface ILoginHandler
 {
-    public Task<Result> Registry(RegistryModel model);
+    public Task<Result> Login(LoginModel model);
 }

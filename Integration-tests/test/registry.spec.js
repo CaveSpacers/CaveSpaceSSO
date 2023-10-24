@@ -1,7 +1,8 @@
 const {test, expect} = require('@playwright/test');
-const {getUserByEmail, insertUser} = require('../main/db-utils');
+const {getUserByLogin, insertUser} = require('../main/db-utils');
 const uuid = require('uuid');
 const axios = require("axios");
+const {generatePasswordHash} = require("../main/utils");
 
 test.describe.parallel("Registration testing", () => {
     const baseUrl = 'http://sso-app:8080';
@@ -16,10 +17,9 @@ test.describe.parallel("Registration testing", () => {
 
         expect(response.status()).toBe(200);
 
-        const users = await getUserByEmail(userData.login);
-        expect(users.length).toBe(1);
-        expect(users[0].Name).toBe(userData.name);
-        expect(users[0].Role).toBe(userData.role);
+        const users = await getUserByLogin(userData.login);
+        expect(users.Name).toBe(userData.name);
+        expect(users.Role).toBe(userData.role);
     });
     test(`POST - create new user with role client`, async ({request}) => {
         const userData = {
@@ -31,15 +31,19 @@ test.describe.parallel("Registration testing", () => {
 
         expect(response.status()).toBe(200);
 
-        const users = await getUserByEmail(userData.login);
-        expect(users.length).toBe(1);
-        expect(users[0].Name).toBe(userData.name);
-        expect(users[0].Role).toBe(userData.role);
+        const users = await getUserByLogin(userData.login);
+        expect(users.Name).toBe(userData.name);
+        expect(users.Role).toBe(userData.role);
     });
 
     test('POST - create same email user', async ({request}) => {
+        const plainPassword = "1q2w!aA123";
         const existingUserData = {
-            userId: uuid.v4(), name: 'Max', login: 'max2@gmail.com', password: '1q2w!aA123', role: 'renter',
+            UserId: uuid.v4(),
+            Name: 'Max',
+            Login: 'max2@gmail.com',
+            PasswordHash: await generatePasswordHash(plainPassword),
+            Role: 'renter',
         };
         const newUserWithSameEmail = {
             name: 'Fake Max', login: 'max2@gmail.com', password: '1q2w!aA123', role: 'renter',

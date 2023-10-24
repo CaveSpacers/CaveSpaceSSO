@@ -21,7 +21,7 @@ public class UserValidator : IUserValidator
     //RolePattern
     private static readonly string[] RequiredRole = { "client", "renter"};
 
-    public Task<Result> Validate(IModel model)
+    public Task<Result> Validate(RegistryModel model)
     {
         List<Error> errors = new List<Error>();
 
