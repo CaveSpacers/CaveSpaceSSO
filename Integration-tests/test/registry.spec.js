@@ -1,17 +1,16 @@
 const {test, expect} = require('@playwright/test');
 const {getUserByLogin, insertUser} = require('../main/db-utils');
 const uuid = require('uuid');
-const axios = require("axios");
 const {generatePasswordHash} = require("../main/utils");
 
 test.describe.parallel("Registration testing", () => {
-    const baseUrl = 'http://sso-app:8080';
+    const baseUrl = process.env.BASE_URL ?? 'http://localhost:8080';
     
     test(`POST - create new user with role renter`, async ({request}) => {
         const userData = {
             name: 'Seva', login: 'seva@gmail.com', password: '1q2w!aA123', role: 'renter',
         };
-        const response = await request.post(`/api/v1/registry`, {
+        const response = await request.post(`${baseUrl}/api/v1/registry`, {
             data: userData
         });
 
