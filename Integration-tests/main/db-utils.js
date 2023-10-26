@@ -2,7 +2,7 @@ const {Client} = require('pg');
 
 const getClient = () => {
     return new Client({
-        host: 'sso-postgres', user: 'postgres', port: 5432, password: 'postgres', database: 'sso-postgres',
+        host: process.env.DB_HOST ?? '5432:5432', user: 'postgres', port: 5432, password: 'postgres', database: 'sso-postgres',
     });
 };
 
