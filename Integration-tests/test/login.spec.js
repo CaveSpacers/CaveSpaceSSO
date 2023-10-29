@@ -2,8 +2,9 @@ const {test, expect} = require('@playwright/test');
 const {getTokenRecordByUserId, insertUser} = require('../main/db-utils');
 const uuid = require("uuid");
 const {generatePasswordHash} = require("../main/utils");
+const config = require('../config.js');
 test.describe.parallel("Login testing", () => {
-    const baseUrl = process.env.BASE_URL ?? 'http://localhost:8080';
+    const baseUrl = config.baseUrl;
 
     test(`POST - login with valid credentials`, async ({request}) => {
         const plainPassword = "login1A!a";
