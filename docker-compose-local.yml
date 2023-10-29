@@ -1,0 +1,41 @@
+version: "3.9"
+
+services:
+  sso-app:
+    container_name: sso-app
+    depends_on: [ sso-postgres ]
+    build:
+      dockerfile: .docker/sso-app.Dockerfile
+    ports:
+      - "8080:8080"
+    profiles:
+      - infra
+    networks:
+      - net
+  sso-postgres:
+    container_name: sso-postgres
+    image: postgres:15.3
+    environment:
+      POSTGRES_DB: "sso-postgres"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+    ports:
+      - "5432:5432"
+    profiles:
+      - infra
+    networks:
+      - net
+  sso-integration-tests:
+    container_name: sso-integration-tests
+    build:
+      dockerfile: .docker/int.Dockerfile
+    environment:
+      - BASE_URL=http://sso-app:8080
+      - DB_HOST=sso-postgres
+    profiles:
+      - tests
+    networks:
+      - net
+
+networks:
+  net:

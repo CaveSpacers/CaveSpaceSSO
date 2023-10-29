@@ -1,8 +1,8 @@
 const {Client} = require('pg');
-
+const config = require('../config.js');
 const getClient = () => {
     return new Client({
-        host: 'localhost', user: 'postgres', port: 5432, password: 'postgres', database: 'sso-postgres',
+        host: config.dbhost, user: 'postgres', port: 5432, password: 'postgres', database: 'sso-postgres',
     });
 };
 

@@ -3,7 +3,6 @@ const {getTokenRecordByUserId, insertUser} = require('../main/db-utils');
 const uuid = require("uuid");
 const {generatePasswordHash} = require("../main/utils");
 test.describe.parallel("Login testing", () => {
-    const baseUrl = 'http://localhost:8080';
 
     test(`POST - login with valid credentials`, async ({request}) => {
         const plainPassword = "login1A!a";
@@ -20,7 +19,7 @@ test.describe.parallel("Login testing", () => {
             Login: 'maxdb@gmail.com',
             Password: plainPassword,
         };
-        const response = await request.post(`${baseUrl}/api/v1/login`, {
+        const response = await request.post(`/api/v1/login`, {
             data: loginUserData,
         });
         expect(response.status()).toBe(200);
@@ -56,7 +55,7 @@ test.describe.parallel("Login testing", () => {
             Password: 'login22!A2',
         };
 
-        const response = await request.post(`${baseUrl}/api/v1/login`, {
+        const response = await request.post(`/api/v1/login`, {
             data: loginUserData,
         });
         expect(response.status()).toBe(400);
@@ -81,7 +80,7 @@ test.describe.parallel("Login testing", () => {
             Password: 'login22!A',
         };
 
-        const response = await request.post(`${baseUrl}/api/v1/login`, {
+        const response = await request.post(`/api/v1/login`, {
             data: loginUserData,
         });
         expect(response.status()).toBe(400);
@@ -106,7 +105,7 @@ test.describe.parallel("Login testing", () => {
             Password: 'login22!A',
         };
 
-        const responseFirst = await request.post(`${baseUrl}/api/v1/login`, {
+        const responseFirst = await request.post(`/api/v1/login`, {
             data: loginUserData,
         });
         expect(responseFirst.status()).toBe(200);
@@ -114,7 +113,7 @@ test.describe.parallel("Login testing", () => {
         const tokenDataFirst = await getTokenRecordByUserId(userForDb.UserId);
         const expirationTimeFirst = tokenDataFirst.ExpirationDateTime;
 
-        const responseSecond = await request.post(`${baseUrl}/api/v1/login`, {
+        const responseSecond = await request.post(`/api/v1/login`, {
             data: loginUserData,
         });
         expect(responseSecond.status()).toBe(200);
