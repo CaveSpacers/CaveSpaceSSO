@@ -2,15 +2,13 @@ const {test, expect} = require('@playwright/test');
 const {getUserByLogin, insertUser} = require('../main/db-utils');
 const uuid = require('uuid');
 const {generatePasswordHash} = require("../main/utils");
-
 test.describe.parallel("Registration testing", () => {
-    const baseUrl = process.env.BASE_URL ?? 'http://localhost:8080';
     
     test(`POST - create new user with role renter`, async ({request}) => {
         const userData = {
             name: 'Seva', login: 'seva@gmail.com', password: '1q2w!aA123', role: 'renter',
         };
-        const response = await request.post(`${baseUrl}/api/v1/registry`, {
+        const response = await request.post(`/api/v1/registry`, {
             data: userData
         });
 
@@ -24,10 +22,9 @@ test.describe.parallel("Registration testing", () => {
         const userData = {
             name: 'Max', login: 'max@gmail.com', password: '1q2w!aA123', role: 'client'
         };
-        const response = await request.post(`${baseUrl}/api/v1/registry`, {
+        const response = await request.post(`/api/v1/registry`, {
             data: userData
         });
-
         expect(response.status()).toBe(200);
 
         const users = await getUserByLogin(userData.login);
@@ -48,7 +45,7 @@ test.describe.parallel("Registration testing", () => {
             name: 'Fake Max', login: 'max2@gmail.com', password: '1q2w!aA123', role: 'renter',
         };
         await insertUser(existingUserData);
-        const response = await request.post(`${baseUrl}/api/v1/registry`, {
+        const response = await request.post(`/api/v1/registry`, {
             data: newUserWithSameEmail,
         });
         expect(response.status()).toBe(409);
@@ -56,7 +53,7 @@ test.describe.parallel("Registration testing", () => {
         expect(responseBody[0].code).toBe("UserAlreadyExist");
     });
     test('POST - create user with short password', async ({request}) => {
-        const response = await request.post(`${baseUrl}/api/v1/registry`, {
+        const response = await request.post(`/api/v1/registry`, {
             data: {
                 name: 'Seva', login: 'seva@gmail.com', password: '1q2w!aA', role: 'renter'
             }
@@ -66,7 +63,7 @@ test.describe.parallel("Registration testing", () => {
         expect(responseBody[0].code).toBe("PasswordTooShort");
     });
     test('POST - password without capital letters', async ({request}) => {
-        const response = await request.post(`${baseUrl}/api/v1/registry`, {
+        const response = await request.post(`/api/v1/registry`, {
             data: {
                 name: 'Seva', login: 'seva@gmail.com', password: '1q2w!aa223', role: 'renter',
             },
@@ -76,7 +73,7 @@ test.describe.parallel("Registration testing", () => {
         expect(responseBody[0].code).toBe("PasswordMissingUppercase");
     });
     test('POST - password without specsymbols', async ({request}) => {
-        const response = await request.post(`${baseUrl}/api/v1/registry`, {
+        const response = await request.post(`/api/v1/registry`, {
             data: {
                 name: 'Seva', login: 'seva@gmail.com', password: '1q2Waa223', role: 'renter',
             },
@@ -86,7 +83,7 @@ test.describe.parallel("Registration testing", () => {
         expect(responseBody[0].code).toBe("PasswordMissingSpecialCharacter");
     });
     test('POST - password without digits', async ({request}) => {
-        const response = await request.post(`${baseUrl}/api/v1/registry`, {
+        const response = await request.post(`/api/v1/registry`, {
             data: {
                 name: 'Seva', login: 'seva@gmail.com', password: 'aqewaaFf!', role: 'renter',
             },
@@ -96,7 +93,7 @@ test.describe.parallel("Registration testing", () => {
         expect(responseBody[0].code).toBe("PasswordMissingDigit");
     });
     test('POST - invalid email format', async ({request}) => {
-        const response = await request.post(`${baseUrl}/api/v1/registry`, {
+        const response = await request.post(`/api/v1/registry`, {
             data: {
                 name: 'Seva', login: 'seva@gmail', password: '1q2w!aA123', role: 'renter',
             },
@@ -106,7 +103,7 @@ test.describe.parallel("Registration testing", () => {
         expect(responseBody[0].code).toBe("InvalidEmailFormat");
     });
     test('POST - invalid email format - 2', async ({request}) => {
-        const response = await request.post(`${baseUrl}/api/v1/registry`, {
+        const response = await request.post(`/api/v1/registry`, {
             data: {
                 name: 'Seva', login: 'seva@', password: '1q2w!aA123', role: 'renter',
             }
@@ -116,7 +113,7 @@ test.describe.parallel("Registration testing", () => {
         expect(responseBody[0].code).toBe("InvalidEmailFormat");
     });
     test('POST - invalid email format - 3', async ({request}) => {
-        const response = await request.post(`${baseUrl}/api/v1/registry`, {
+        const response = await request.post(`/api/v1/registry`, {
             data: {
                 name: 'Seva', login: 'seva_gmail.com', password: '1q2w!aA123', role: 'renter',
             }
@@ -126,7 +123,7 @@ test.describe.parallel("Registration testing", () => {
         expect(responseBody[0].code).toBe("InvalidEmailFormat");
     });
     test('POST - invalid user role', async ({request}) => {
-        const response = await request.post(`${baseUrl}/api/v1/registry`, {
+        const response = await request.post(`/api/v1/registry`, {
             data: {
                 name: 'Seva', login: 'seva2@gmail.com', password: '1q2w!aA123', role: 'rentor'
             }
@@ -136,7 +133,7 @@ test.describe.parallel("Registration testing", () => {
         expect(responseBody[0].code).toBe("InvalidRole");
     })
     test('POST - too long name', async ({request}) => {
-        const response = await request.post(`${baseUrl}/api/v1/registry`, {
+        const response = await request.post(`/api/v1/registry`, {
             data: {
                 name: 'Seva12345123451234512345123451234512345123451234512',
                 login: 'seva2@gmail.com',
@@ -149,7 +146,7 @@ test.describe.parallel("Registration testing", () => {
         expect(responseBody[0].code).toBe("NameIsTooLong");
     });
     test('POST - too long email', async ({request}) => {
-        const response = await request.post(`${baseUrl}/api/v1/registry`, {
+        const response = await request.post(`/api/v1/registry`, {
             data: {
                 name: 'Seva',
                 login: 'seva12345123451234512345123451234512345123451234512@gmail.com',
@@ -162,7 +159,7 @@ test.describe.parallel("Registration testing", () => {
         expect(responseBody[0].code).toBe("EmailIsTooLong");
     });
     test('POST - too long password', async ({request}) => {
-        const response = await request.post(`${baseUrl}/api/v1/registry`, {
+        const response = await request.post(`/api/v1/registry`, {
             data: {
                 name: 'Seva',
                 login: 'seva@gmail.com',
