@@ -2,7 +2,7 @@ name: Integration tests run
 run-name: ${{ github.ref }} is merging in ${{ inputs.deploy_target }}
 on: [pull_request]
 jobs:
-  infra:
+  docker:
     runs-on: ubuntu-latest
     steps:
       - run: echo "Running integration tests"
@@ -12,12 +12,5 @@ jobs:
         uses: docker/setup-qemu-action@v1
       - run: ./run-app-local.sh
         name: Build app and infra
-  tests:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Sleep Action
-        uses: juliangruber/sleep-action@v2.0.0
-        with:
-          time: 20s
       - run: ./run-test.sh
         name: Run tests
