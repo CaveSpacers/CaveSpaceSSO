@@ -2,7 +2,16 @@ name: Integration tests run
 run-name: ${{ github.ref }} is merging in ${{ inputs.deploy_target }}
 on: [pull_request]
 jobs:
-  Integration-tests:
+  Tests:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "Hello world!"
+      - run: echo "Running integration tests"
+      - run: ls ${{ github.workspace }}
+      - run: ./run-app-local.sh
+        name: Build app and infra
+      - name: Sleep Action
+        uses: juliangruber/sleep-action@v2.0.0
+        with:
+          time: 20s
+      - run: ./run-test.sh
+        name: Run tests
