@@ -13,7 +13,6 @@ jobs:
       - run: |
           ./run-app-local.sh
         name: Build app and infra
-        timeout-minutes: 1
       - run: |
           ./run-test.sh
         name: Run tests
