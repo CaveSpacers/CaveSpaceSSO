@@ -12,25 +12,23 @@ jobs:
       - name: Set up Docker
         run: |
           sudo apt-get update
-          sudo apt-get -y install docker.io
-          sudo systemctl start docker
-          sudo systemctl enable docker
-          sudo usermod -aG docker $USER
+          sudo apt-get remove docker.io containerd.io
+          sudo apt-get install docker.io
           docker --version
-
       - name: Set up Docker Compose
         run: |
           sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
           sudo chmod +x /usr/local/bin/docker-compose
           docker-compose --version
+
       - run: echo "Running integration tests"
-      
+
       - name: Build app and infra
         run: |
           docker-compose -f docker-compose-local.yml down --remove-orphans -v &&
           docker-compose -f docker-compose-local.yml --profile infra build &&
           docker-compose -f docker-compose-local.yml --profile infra up
-        
+
       - name: Sleep Action
         uses: juliangruber/sleep-action@v2.0.0
         with:
