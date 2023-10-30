@@ -6,11 +6,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: echo "Running integration tests"
+      - name: Check out repository code
+        uses: actions/checkout@v4
       - run: |
-          ls -la 
-          pwd
-          cd /home/runner/work/CaveSpaceSSO/CaveSpaceSSO
-          pwd
           ls -la
       - run: ./run-app-local.sh
         name: Build app and infra
