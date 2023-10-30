@@ -12,5 +12,6 @@ jobs:
         uses: docker/setup-qemu-action@v1
       - run: ./run-app-local.sh
         name: Build app and infra
-#      - run: ./run-test.sh
-#        name: Run tests
+        timeout-minutes: 1
+      - run: ./run-test.sh
+        name: Run tests
