@@ -5,6 +5,7 @@ services:
     container_name: sso-app
     depends_on: [ sso-postgres ]
     build:
+      context: .
       dockerfile: .docker/sso-app.Dockerfile
     ports:
       - "8080:8080"
