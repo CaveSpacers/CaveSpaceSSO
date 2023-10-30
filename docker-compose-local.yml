@@ -29,6 +29,7 @@ services:
   sso-integration-tests:
     container_name: sso-integration-tests
     build:
+      context: ./test
       dockerfile: .docker/int.Dockerfile
     environment:
       - BASE_URL=http://sso-app:8080
