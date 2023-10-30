@@ -25,9 +25,7 @@ jobs:
 
       - name: Build app and infra
         run: |
-          docker-compose -f docker-compose-local.yml down --remove-orphans -v &&
-          docker-compose -f docker-compose-local.yml --profile infra build &&
-          docker-compose -f docker-compose-local.yml --profile infra up -d
+          ./run-app-local.sh
 
       - name: Sleep Action
         uses: juliangruber/sleep-action@v2.0.0
@@ -35,6 +33,5 @@ jobs:
           time: 20s
       - name: Run tests
         run: |
-          docker-compose -f docker-compose-local.yml --profile tests build &&
-          docker-compose -f docker-compose-local.yml --profile tests up
+          ./run-test.sh
         
