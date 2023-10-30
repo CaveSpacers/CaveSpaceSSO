@@ -1,0 +1,8 @@
+name: Integration tests run
+run-name: ${{ github.ref }} is merging in ${{ inputs.deploy_target }}
+on: [pull_request]
+jobs:
+  Integration-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Hello world!"
