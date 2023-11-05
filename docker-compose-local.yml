@@ -5,6 +5,7 @@ services:
     container_name: sso-app
     depends_on: [ sso-postgres ]
     build:
+      context: .
       dockerfile: .docker/sso-app.Dockerfile
     ports:
       - "8080:8080"
@@ -28,6 +29,7 @@ services:
   sso-integration-tests:
     container_name: sso-integration-tests
     build:
+      context: .
       dockerfile: .docker/int.Dockerfile
     environment:
       - BASE_URL=http://sso-app:8080
