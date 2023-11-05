@@ -2,17 +2,17 @@ name: Integration tests run
 run-name: ${{ github.ref }} is merging in ${{ inputs.deploy_target }}
 on: [pull_request]
 jobs:
-  docker:
+  tests-setup:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "Running integration tests"
       - name: Check out repository code
         uses: actions/checkout@v4
       - name: Setup Docker
         uses: docker/setup-qemu-action@v1
-      - run: |
+      - name: Build app and infra
+        run: |
           ./run-app-local.sh
-        name: Build app and infra
-      - run: |
+      - name: Run tests
+        run: |
           ./run-test.sh
-        name: Run tests
+        
