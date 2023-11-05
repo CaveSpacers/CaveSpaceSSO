@@ -4,7 +4,7 @@ namespace SSO.Middlewares;
 
 public class RegistryMiddleware
 {
-    public readonly RequestDelegate _next;
+    private readonly RequestDelegate _next;
 
     public RegistryMiddleware(RequestDelegate next)
     {

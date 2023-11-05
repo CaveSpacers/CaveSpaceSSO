@@ -28,10 +28,10 @@ services:
   sso-integration-tests:
     container_name: sso-integration-tests
     build:
-      dockerfile: .docker/int.Dockerfile
+      dockerfile: .docker/integration-tests.Dockerfile
     environment:
-      - BASE_URL=http://sso-app:8080
-      - DB_HOST=sso-postgres
+      BASE_URL: "http://sso-app:8080"
+      DB_HOST: "sso-postgres"
     profiles:
       - tests
     networks:

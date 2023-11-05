@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SSO.Authorization;
 using SSO.Controllers.Models;
 using SSO.Handlers.Interfaces;
 using SSO.Services;
@@ -22,11 +24,11 @@ public class AccountController : Controller
     {
         //вынести все это в отдельный мидлвейр
         if (!ModelState.IsValid) return BadRequest(new Error("ModelException", "Invalid model in request"));
-        
+
         var result = await _registryHandler.Registry(model);
 
         if (result.IsSucceeded) return Ok();
-        
+
         if (result.IsBadRequest) return BadRequest(result.Errors());
 
         if (result.IsConflict) return Conflict(result.Errors());
@@ -44,6 +46,18 @@ public class AccountController : Controller
         if (result.IsSucceeded) return Ok(result.Response());
 
         if (result.IsBadRequest) return BadRequest(result.Errors());
+
+        return StatusCode(500);
+    }
+
+    [HttpPost("access")]
+    [Authorize]
+    public async Task<IActionResult> Access([FromBody] AccessModel model)
+    {
+        //if (!ModelState.IsValid) return BadRequest(new Error("ModelException", "Invalid model in request"));
+
+        Console.WriteLine("Success");
+        //Какая-то бизнес логика
 
         return StatusCode(500);
     }

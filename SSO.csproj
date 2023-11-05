@@ -16,7 +16,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Content Include=".docker\int.Dockerfile" />
+      <Content Include=".docker\integration-tests.Dockerfile" />
       <Content Include=".docker\sso-app.Dockerfile" />
     </ItemGroup>
 

@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
+using SSO.Authorization;
 using SSO.BL;
 using SSO.DAL.Implementations;
 using SSO.DAL.Interfaces;
@@ -8,6 +10,7 @@ using SSO.Bl.Interfaces;
 using SSO.Configuration;
 using SSO.Middlewares;
 using SSO.DAL;
+using SSO.Services;
 using SSO.Services.Implementations;
 using SSO.Services.Interfaces;
 
@@ -15,7 +18,7 @@ namespace SSO;
 
 public class Startup
 {
-    public IConfiguration Configuration { get; }
+    private IConfiguration Configuration { get; }
 
     public Startup(IConfiguration configuration)
     {
@@ -28,7 +31,13 @@ public class Startup
             options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
 
         Console.WriteLine(Configuration.GetConnectionString("DefaultConnection"));
+        
+        //services.Configure<ClientService>(Configuration.GetSection("BasicAuthentication"));
+        
+        // services.AddAuthentication()
+        //     .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>(BasicAuthenticationDefaults.AuthenticationScheme, null);
 
+        services.AddSingleton(Configuration);
         services.AddScoped<IUserValidator, UserValidator>(_ => new UserValidator());
         services.AddScoped<IUserDal, UserDal>();
         services.AddScoped<IUserBl, UserBl>();
@@ -43,6 +52,9 @@ public class Startup
         app.ConfigureDateStorage<ApplicationContext>();
         app.UseMiddleware<RegistryMiddleware>();
         app.UseRouting();
+        app.UseMiddleware<BasicAuthMiddleware>();
+        //app.UseAuthorization();
+        //app.UseAuthentication();
         app.UseEndpoints(endpoints =>
             endpoints.MapControllers());
     }
