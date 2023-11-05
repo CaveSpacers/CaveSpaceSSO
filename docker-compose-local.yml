@@ -38,6 +38,16 @@ services:
       - tests
     networks:
       - net
-
+  wiremock-test-server:
+    container_name: wiremock
+    image: wiremock/wiremock:2.32.0
+    ports:
+      - "3001:8080"
+    volumes:
+      - ./wiremock/test-server:/home/wiremock
+    profiles:
+      - infra
+    networks:
+      - net
 networks:
   net:
