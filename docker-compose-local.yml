@@ -33,6 +33,7 @@ services:
       dockerfile: .docker/int.Dockerfile
     environment:
       - BASE_URL=http://sso-app:8080
+      - MOCK_BASE_URL=http://wiremock:3001
       - DB_HOST=sso-postgres
     profiles:
       - tests
