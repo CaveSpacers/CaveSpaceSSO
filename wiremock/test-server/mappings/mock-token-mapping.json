@@ -1,10 +1,27 @@
 {
   "request": {
-    "method": "GET",
-    "urlPath": "/api/v1/mock-token"
+    "method": "POST",
+    "url": "/api/v1/mock-token",
+    "headers": {
+      "Authorization": {
+        "matches": "Basic c3NvOlVyT185RF1nSnhKWiQ5Nw=="
+      },
+      "Content-Type": {
+        "equalTo": "application/json"
+      }
+    },
+    "bodyPatterns": [
+      {
+        "equalToJson" : { "accessToken": "b5d2fa64-80bb-11ee-b962-0242ac120002" }
+      }
+    ]
   },
   "response": {
     "status": 200,
-    "bodyFileName": "mock-token.json"
+    "jsonBody": {
+      "login": "moxmock@gmail.com",
+      "name": "Happy Max",
+      "role": "client"
+    }
   }
 }
