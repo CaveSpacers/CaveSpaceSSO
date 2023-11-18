@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SSO.Authorization;
+using SSO.Authorization.Basic;
 using SSO.Controllers.Models;
 using SSO.Handlers.Interfaces;
 using SSO.Services;
@@ -20,6 +20,7 @@ public class AccountController : Controller
     }
 
     [HttpPost("registry")]
+    [AllowAnonymous]
     public async Task<IActionResult> Registry([FromBody] RegistryModel model)
     {
         //вынести все это в отдельный мидлвейр
@@ -37,6 +38,7 @@ public class AccountController : Controller
     }
 
     [HttpPost("login")]
+    [AllowAnonymous]
     public async Task<IActionResult> Login([FromBody] LoginModel model)
     {
         if (!ModelState.IsValid) return BadRequest(new Error("ModelException", "Invalid model in request"));
@@ -51,7 +53,7 @@ public class AccountController : Controller
     }
 
     [HttpPost("access")]
-    [Authorize]
+    [BasicAuthorization]
     public async Task<IActionResult> Access([FromBody] AccessModel model)
     {
         //if (!ModelState.IsValid) return BadRequest(new Error("ModelException", "Invalid model in request"));

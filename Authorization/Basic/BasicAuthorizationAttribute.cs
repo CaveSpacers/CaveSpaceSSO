@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 
-namespace SSO.Authorization;
+namespace SSO.Authorization.Basic;
 
 public class BasicAuthorizationAttribute: AuthorizeAttribute
 {

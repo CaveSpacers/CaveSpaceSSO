@@ -5,7 +5,8 @@
       "dotnetRunMessages": true,
       "launchBrowser": false,
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "SSO": "UrO_9D]gJxJZ$97"
       }
     }
   }
