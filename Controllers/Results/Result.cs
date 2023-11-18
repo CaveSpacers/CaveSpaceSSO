@@ -1,4 +1,6 @@
-namespace SSO.Services;
+using SSO.Controllers.ResponseModels;
+
+namespace SSO.Controllers.Results;
 
 public struct Result
 {

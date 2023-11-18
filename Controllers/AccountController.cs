@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SSO.Authorization.Basic;
-using SSO.Controllers.Models;
+using SSO.Controllers.RequestModels;
+using SSO.Controllers.Results;
 using SSO.Handlers.Interfaces;
-using SSO.Services;
 
 namespace SSO.Controllers;
 

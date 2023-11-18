@@ -1,7 +1,7 @@
 using SSO.Bl.Interfaces;
 using SSO.Handlers.Interfaces;
-using SSO.Services;
-using SSO.Controllers.Models;
+using SSO.Controllers.RequestModels;
+using SSO.Controllers.Results;
 
 namespace SSO.Handlers.Implementations;
 

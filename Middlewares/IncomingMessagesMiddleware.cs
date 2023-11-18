@@ -1,12 +1,13 @@
+using SSO.Controllers.Results;
 using SSO.Services;
 
 namespace SSO.Middlewares;
 
-public class RegistryMiddleware
+public class IncomingMessagesMiddleware
 {
     private readonly RequestDelegate _next;
 
-    public RegistryMiddleware(RequestDelegate next)
+    public IncomingMessagesMiddleware(RequestDelegate next)
     {
         _next = next;
     }

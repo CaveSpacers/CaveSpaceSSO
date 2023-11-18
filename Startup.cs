@@ -36,7 +36,6 @@ public class Startup
             .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>(
                 BasicAuthenticationDefaults.AuthenticationScheme, null);
 
-        //services.AddSingleton(Configuration);
         services.AddScoped<IUserValidator, UserValidator>(_ => new UserValidator());
         services.AddScoped<IUserDal, UserDal>();
         services.AddScoped<IUserBl, UserBl>();
@@ -52,7 +51,7 @@ public class Startup
         app.UseRouting();
         app.UseAuthentication();
         app.UseAuthorization();
-        app.UseMiddleware<RegistryMiddleware>();
+        app.UseMiddleware<IncomingMessagesMiddleware>();
         app.UseEndpoints(endpoints =>
             endpoints.MapControllers());
     }

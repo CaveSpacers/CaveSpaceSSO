@@ -1,8 +1,9 @@
 using SSO.DAL.Interfaces;
 using SSO.DAL.Models;
 using SSO.Bl.Interfaces;
-using SSO.Controllers.Models;
-using SSO.Services;
+using SSO.Controllers.RequestModels;
+using SSO.Controllers.ResponseModels;
+using SSO.Controllers.Results;
 using SSO.Services.Interfaces;
 
 namespace SSO.BL;

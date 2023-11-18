@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace SSO.Controllers.Models;
+namespace SSO.Controllers.RequestModels;
 
 public class RegistryModel
 {
