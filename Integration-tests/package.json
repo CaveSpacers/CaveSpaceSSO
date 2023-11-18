@@ -9,6 +9,8 @@
     "test": "npx playwright test"
   },
   "dependencies": {
+    "allure-commandline": "^2.24.1",
+    "allure-playwright": "^2.9.2",
     "axios": "^1.5.1",
     "bcryptjs": "^2.4.3",
     "uuid": "^9.0.1"

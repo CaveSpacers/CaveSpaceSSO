@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "stage_name": "Stone Cold Steve Austin",
+    "full_name": "Steve Austin",
+    "category": "Individual",
+    "createdAt": "2009-01-01T00:32:28.996Z",
+    "updatedAt": "2009-01-01T00:32:28.996Z"
+  },
+  {
+    "id": 2,
+    "stage_name": "Eddie Guerrero",
+    "full_name": "Eduardo Gory Guerrero Llanes",
+    "category": "Individual",
+    "createdAt": "2009-01-01T00:32:28.996Z",
+    "updatedAt": "2009-01-01T00:32:28.996Z"
+  },
+  {
+    "id": 3,
+    "stage_name": "The Undertaker",
+    "full_name": "Mark William Calaway",
+    "category": "Individual",
+    "createdAt": "2022-01-01T00:32:28.996Z",
+    "updatedAt": "2022-01-01T00:32:28.996Z"
+  }
+]

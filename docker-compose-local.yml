@@ -33,11 +33,22 @@ services:
       dockerfile: .docker/int.Dockerfile
     environment:
       - BASE_URL=http://sso-app:8080
+      - MOCK_BASE_URL=http://wiremock:8080
       - DB_HOST=sso-postgres
     profiles:
       - tests
     networks:
       - net
-
+  wiremock:
+    container_name: wiremock
+    image: wiremock/wiremock:2.32.0
+    ports:
+      - "3001:8080"
+    volumes:
+      - ./wiremock/test-server:/home/wiremock
+    profiles:
+      - infra
+    networks:
+      - net
 networks:
   net:
