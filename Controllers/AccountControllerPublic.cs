@@ -1,7 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Abstractions;
-using Microsoft.AspNetCore.Mvc.ActionConstraints;
 using SSO.Controllers.RequestModels;
 using SSO.Controllers.Results;
 using SSO.Handlers.Interfaces;
@@ -10,7 +8,6 @@ using SSO.Routing;
 namespace SSO.Controllers;
 
 [Route("api/v1")]
-// [PortActionConstraint(8080)]
 [PublicPort]
 public class AccountControllerPublic : Controller
 {
@@ -54,24 +51,3 @@ public class AccountControllerPublic : Controller
         return StatusCode(500);
     }
 }
-
-// [AttributeUsage(AttributeTargets.Class)]
-// public class PortActionConstraint : ActionMethodSelectorAttribute
-// {
-//     public PortActionConstraint(int port)
-//     {
-//         Port = port;
-//     }
-//
-//     public int Port { get; }
-//
-//     public override bool IsValidForRequest(RouteContext routeContext, ActionDescriptor action)
-//     {
-//         //external port
-//         var externalPort = routeContext.HttpContext.Request.Host.Port;
-//         //local port 
-//         var localPort = routeContext.HttpContext.Connection.LocalPort;
-//         //write here your custom logic. for example  
-//         return Port == localPort ;
-//     }
-// }

@@ -8,7 +8,6 @@ using SSO.Routing;
 namespace SSO.Controllers;
 
 [Route("api/v1")]
-// [PortActionConstraint(8082)]
 [InternalPort]
 public class AccountControllerInternal : Controller
 {
