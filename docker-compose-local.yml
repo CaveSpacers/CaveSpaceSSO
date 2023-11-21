@@ -8,8 +8,11 @@ services:
       dockerfile: .docker/sso-app.Dockerfile
     ports:
       - "8080:8080"
+      - "8082:8082"
     profiles:
       - infra
+    environment:
+      SSO: "UrO_9D]gJxJZ$97"
     networks:
       - net
   sso-postgres:

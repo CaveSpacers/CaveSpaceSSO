@@ -42,8 +42,10 @@ public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSc
             var password = credentials[1];
 
             var encodedPassword = Environment.GetEnvironmentVariable(username.ToUpper());
+            
+            Console.Write(encodedPassword);
 
-            if (encodedPassword == null & encodedPassword != password)
+            if (encodedPassword == null || encodedPassword != password)
             {
                 return AuthenticateResult.Fail(AuthenticateResultDictionary.InvalidUsernameOrPassword);
             }

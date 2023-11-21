@@ -7,6 +7,8 @@ public struct Result
     public bool IsSucceeded { get; set; }
     public bool IsConflict { get; set; }
     public bool IsBadRequest { get; set; }
+    
+    public bool IsForbidden { get; set; }
 
     private List<Error> _errors;
 
@@ -42,6 +44,11 @@ public struct Result
     public static Result Conflict(params Error[]? errors)
     {
         return new Result { IsConflict = true, _errors = errors?.ToList() ?? new List<Error>() };
+    }
+
+    public static Result Forbidden()
+    {
+        return new Result { IsForbidden = true };
     }
 
     public IEnumerable<Error> Errors()

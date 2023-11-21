@@ -7,4 +7,5 @@ public interface IUserBl
 {
     public Task<Result> CreateUser(RegistryModel model);
     public Task<Result> GetAccessToken(LoginModel model);
+    public Task<Result> GetUserByToken(AccessModel model);
 }

@@ -10,7 +10,7 @@ using SSO.Bl.Interfaces;
 using SSO.Configuration;
 using SSO.Middlewares;
 using SSO.DAL;
-using SSO.Services;
+using SSO.Routing;
 using SSO.Services.Implementations;
 using SSO.Services.Interfaces;
 
@@ -39,8 +39,7 @@ public class Startup
         services.AddScoped<IUserValidator, UserValidator>(_ => new UserValidator());
         services.AddScoped<IUserDal, UserDal>();
         services.AddScoped<IUserBl, UserBl>();
-        services.AddScoped<IRegistryHandler, RegistryHandler>();
-        services.AddScoped<ILoginHandler, LoginHandler>();
+        services.AddScoped<IUserHandler, UserHandler>();
 
         services.AddControllers();
     }
@@ -48,11 +47,19 @@ public class Startup
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
         app.ConfigureDateStorage<ApplicationContext>();
-        app.UseRouting();
-        app.UseAuthentication();
-        app.UseAuthorization();
-        app.UseMiddleware<IncomingMessagesMiddleware>();
-        app.UseEndpoints(endpoints =>
-            endpoints.MapControllers());
+        
+        app.MapOnPublicPort(publicApp => publicApp
+            .UseRouting()
+            .UseMiddleware<IncomingMessagesMiddleware>()
+            .UseEndpoints(endpoints =>
+            endpoints.MapControllers()));
+        
+        app.MapOnInternalPort(publicApp => publicApp
+            .UseRouting()
+            .UseAuthentication()
+            .UseAuthorization()
+            .UseMiddleware<IncomingMessagesMiddleware>()
+            .UseEndpoints(endpoints =>
+                endpoints.MapControllers()));
     }
 }

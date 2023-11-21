@@ -1,22 +1,24 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SSO.Authorization.Basic;
+using Microsoft.AspNetCore.Mvc.Abstractions;
+using Microsoft.AspNetCore.Mvc.ActionConstraints;
 using SSO.Controllers.RequestModels;
 using SSO.Controllers.Results;
 using SSO.Handlers.Interfaces;
+using SSO.Routing;
 
 namespace SSO.Controllers;
 
 [Route("api/v1")]
-public class AccountController : Controller
+// [PortActionConstraint(8080)]
+[PublicPort]
+public class AccountControllerPublic : Controller
 {
-    private readonly IRegistryHandler _registryHandler;
-    private readonly ILoginHandler _loginHandler;
+    private readonly IUserHandler _userHandler;
 
-    public AccountController(IRegistryHandler registryHandler, ILoginHandler loginHandler)
+    public AccountControllerPublic(IUserHandler userHandler)
     {
-        _registryHandler = registryHandler;
-        _loginHandler = loginHandler;
+        _userHandler = userHandler;
     }
 
     [HttpPost("registry")]
@@ -26,7 +28,7 @@ public class AccountController : Controller
         //вынести все это в отдельный мидлвейр
         if (!ModelState.IsValid) return BadRequest(new Error("ModelException", "Invalid model in request"));
 
-        var result = await _registryHandler.Registry(model);
+        var result = await _userHandler.Registry(model);
 
         if (result.IsSucceeded) return Ok();
 
@@ -43,7 +45,7 @@ public class AccountController : Controller
     {
         if (!ModelState.IsValid) return BadRequest(new Error("ModelException", "Invalid model in request"));
 
-        var result = await _loginHandler.Login(model);
+        var result = await _userHandler.Login(model);
 
         if (result.IsSucceeded) return Ok(result.Response());
 
@@ -51,16 +53,25 @@ public class AccountController : Controller
 
         return StatusCode(500);
     }
-
-    [HttpPost("access")]
-    [BasicAuthorization]
-    public async Task<IActionResult> Access([FromBody] AccessModel model)
-    {
-        //if (!ModelState.IsValid) return BadRequest(new Error("ModelException", "Invalid model in request"));
-
-        Console.WriteLine("Success");
-        //Какая-то бизнес логика
-
-        return StatusCode(500);
-    }
 }
+
+// [AttributeUsage(AttributeTargets.Class)]
+// public class PortActionConstraint : ActionMethodSelectorAttribute
+// {
+//     public PortActionConstraint(int port)
+//     {
+//         Port = port;
+//     }
+//
+//     public int Port { get; }
+//
+//     public override bool IsValidForRequest(RouteContext routeContext, ActionDescriptor action)
+//     {
+//         //external port
+//         var externalPort = routeContext.HttpContext.Request.Host.Port;
+//         //local port 
+//         var localPort = routeContext.HttpContext.Connection.LocalPort;
+//         //write here your custom logic. for example  
+//         return Port == localPort ;
+//     }
+// }
