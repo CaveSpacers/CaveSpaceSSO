@@ -13,7 +13,7 @@ services:
     profiles:
       - infra
     environment:
-      SSO: 'UrO_9D]gJxJZ$97'
+      SSO: 'UrO_9D]gJxJZ97'
     networks:
       - net
   sso-postgres:
