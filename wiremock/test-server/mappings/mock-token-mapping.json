@@ -1,0 +1,10 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/api/v1/mock-token"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "mock-token.json"
+  }
+}
