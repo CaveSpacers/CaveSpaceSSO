@@ -114,7 +114,7 @@ test.describe.parallel("Access token testing", () => {
 
     test(`POST - get token info by public port`, async ({ request }) => {
         const username = 'sso';
-        const password = 'UrO_9D]gJxJZ$9';
+        const password = 'UrO_9D]gJxJZ$97';
         const base64Credentials = Buffer.from(`${username}:${password}`).toString('base64');
 
         const tokenData = {
