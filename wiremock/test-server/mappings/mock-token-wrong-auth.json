@@ -1,0 +1,19 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "/api/v1/mock-token-wrong-auth",
+    "headers": {
+      "Authorization": {
+        "doesNotMatch": "Basic c3NvOlVyT185RF1nSnhKWiQ5Nw=="
+      }
+    }
+  },
+  "response": {
+    "status": 401,
+    "jsonBody": {
+      "Login": "moxmock@gmail.com",
+      "Name": "Happy Max",
+      "Role": "client"
+    }
+  }
+}
