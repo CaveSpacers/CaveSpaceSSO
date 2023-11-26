@@ -63,6 +63,26 @@ const insertUser = async (userData) => {
         await disconnectFromDatabase(client);
     }
 };
+const insertToken = async (tokenData) => {
+    const client = await connectToDatabase();
+
+    const insertQuery = `
+        INSERT INTO "Tokens" ("UserId", "Token", "ExpirationDateTime")
+        VALUES (
+            '${tokenData.UserId}',
+            '${tokenData.Token}',
+            '${tokenData.ExpirationDateTime}'
+        )`;
+
+    try {
+        await client.query(insertQuery);
+    } catch (error) {
+        console.error('Error:', error);
+        throw error;
+    } finally {
+        await disconnectFromDatabase(client);
+    }
+};
 module.exports = {
-    getUserByLogin: getUserRecordByLogin, insertUser, getTokenRecordByUserId
+    getUserByLogin: getUserRecordByLogin, insertUser, getTokenRecordByUserId, insertToken
 };

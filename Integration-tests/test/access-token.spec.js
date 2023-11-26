@@ -2,28 +2,33 @@ const {test, expect} = require('@playwright/test');
 const {allure} = require("allure-playwright")
 const uuid = require("uuid");
 const {generatePasswordHash} = require("../main/utils");
-const {insertUser} = require("../main/db-utils");
+const {insertUser, insertToken} = require("../main/db-utils");
 test.describe.parallel("Access token testing", () => {
 
     test(`POST - get token info by uuid`, async ({ request }) => {
         const username = 'sso';
-        const password = 'UrO_9D]gJxJZ$97';
+        const password = 'UrO_9D]gJxJZ97';
         const base64Credentials = Buffer.from(`${username}:${password}`).toString('base64');
 
         const plainPassword = "login1A!amo";
-        const userForDb = {
-            UserId: 'b5d2fa64-80bb-11ee-b962-0242ac120002',
-            Name: 'Happy Max',
-            Login: 'moxmock@gmail.com',
+        const userDataForDb = {
+            UserId: uuid.v4(),
+            Name: 'Max Token',
+            Login: 'validtokenmax@gmail.com',
             PasswordHash: await generatePasswordHash(plainPassword),
             Role: 'client',
         };
-        await insertUser(userForDb);
-        const userIdObject = {
-            UserId: userForDb.UserId,
+        await insertUser(userDataForDb);
+        const tokenDataForDb = {
+            UserId: userDataForDb.UserId,
+            Token: uuid.v4(),
+            ExpirationDateTime: Date.now() + 15 * 60000
         };
-        //добавить инъекцию в БД с Токенами, проверять что он валидный?
-        const response = await request.post('http://localhost:3001/api/v1/mock-token', {
+        await insertToken(tokenDataForDb);
+        const userIdObject = {
+            UserId: userDataForDb.UserId,
+        };
+        const response = await request.post('http://localhost:8082/api/v1/access', {
             headers: {
                 Authorization: `Basic ${base64Credentials}`,
                 'Content-Type': 'application/json',
@@ -33,9 +38,9 @@ test.describe.parallel("Access token testing", () => {
 
         expect(response.status()).toBe(200);
         const responseBody = JSON.parse(await response.text());
-        expect(responseBody.Login).toBe(userForDb.Login);
-        expect(responseBody.Name).toBe(userForDb.Name);
-        expect(responseBody.Role).toBe(userForDb.Role);
+        expect(responseBody.login).toBe(userDataForDb.Login);
+        expect(responseBody.name).toBe(userDataForDb.Name);
+        expect(responseBody.role).toBe(userDataForDb.Role);
     });
 
     test(`POST - get token info by uuid without auth`, async ({ request }) => {
