@@ -3,7 +3,7 @@ const {allure} = require("allure-playwright")
 const uuid = require("uuid");
 const {generatePasswordHash, generateBase64Credentials, generateFormattedDate} = require("../main/utils");
 const {insertUser, insertToken} = require("../main/db-utils");
-const {ssoUsername, ssoPassword} = require("../config");
+const {ssoUsername, ssoPassword, baseTokenUrl} = require("../config");
 test.describe.parallel("Access token testing", () => {
 
     test(`POST - get token info by uuid`, async ({ request }) => {
@@ -28,7 +28,7 @@ test.describe.parallel("Access token testing", () => {
             accessToken: tokenDataForDb.Token,
         };
 // отправляем запрос на токен
-        const response = await request.post('http://localhost:8082/api/v1/access', {
+        const response = await request.post(`${baseTokenUrl}/api/v1/access`, {
             headers: {
                 Authorization: `Basic ${base64Credentials}`,
                 'Content-Type': 'application/json',
@@ -48,7 +48,7 @@ test.describe.parallel("Access token testing", () => {
             accessToken: uuid.v4()
         };
 
-        const response = await request.post('http://localhost:8082/api/v1/access', {
+        const response = await request.post(`${baseTokenUrl}/api/v1/access`, {
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -67,7 +67,7 @@ test.describe.parallel("Access token testing", () => {
             accessToken: uuid.v4()
         };
 
-        const response = await request.post('http://localhost:8082/api/v1/access', {
+        const response = await request.post(`${baseTokenUrl}/api/v1/access`, {
             headers: {
                 Authorization: `Basic ${base64Credentials}`,
                 'Content-Type': 'application/json',
@@ -85,7 +85,7 @@ test.describe.parallel("Access token testing", () => {
             accessToken: "b5d2fa64-80bb-11ee-b962-111111111111"
         };
 
-        const response = await request.post('http://localhost:8082/api/v1/access', {
+        const response = await request.post(`${baseTokenUrl}/api/v1/access`, {
             headers: {
                 Authorization: `Basic ${base64Credentials}`,
                 'Content-Type': 'application/json',
@@ -119,7 +119,7 @@ test.describe.parallel("Access token testing", () => {
             accessToken: expiredTokenDataForDb.Token,
         };
 
-        const response = await request.post('http://localhost:8082/api/v1/access', {
+        const response = await request.post(`${baseTokenUrl}/api/v1/access`, {
             headers: {
                 Authorization: `Basic ${base64Credentials}`,
                 'Content-Type': 'application/json',
@@ -138,7 +138,7 @@ test.describe.parallel("Access token testing", () => {
             accessToken: uuid.v4()
         };
 
-        const response = await request.post('http://localhost:8080/api/v1/access', {
+        const response = await request.post('/api/v1/access', {
             headers: {
                 Authorization: `Basic ${base64Credentials}`,
                 'Content-Type': 'application/json',
