@@ -1,15 +1,14 @@
 const {test, expect} = require('@playwright/test');
 const {allure} = require("allure-playwright")
 const uuid = require("uuid");
-const {generatePasswordHash} = require("../main/utils");
+const {generatePasswordHash, generateBase64Credentials, generateFormattedDate} = require("../main/utils");
 const {insertUser, insertToken} = require("../main/db-utils");
+const {ssoUsername, ssoPassword} = require("../config");
 test.describe.parallel("Access token testing", () => {
 
     test(`POST - get token info by uuid`, async ({ request }) => {
-        const username = 'sso';
-        const password = 'UrO_9D]gJxJZ97';
-        const base64Credentials = Buffer.from(`${username}:${password}`).toString('base64');
-
+//готовим данные
+        const base64Credentials = generateBase64Credentials(ssoUsername, ssoPassword);
         const plainPassword = "login1A!amo";
         const userDataForDb = {
             UserId: uuid.v4(),
@@ -22,12 +21,13 @@ test.describe.parallel("Access token testing", () => {
         const tokenDataForDb = {
             UserId: userDataForDb.UserId,
             Token: uuid.v4(),
-            ExpirationDateTime: Date.now() + 15 * 60000
+            ExpirationDateTime: generateFormattedDate(new Date(Date.now() + 15 * 60 * 1000))
         };
         await insertToken(tokenDataForDb);
         const userIdObject = {
-            UserId: userDataForDb.UserId,
+            accessToken: tokenDataForDb.Token,
         };
+// отправляем запрос на токен
         const response = await request.post('http://localhost:8082/api/v1/access', {
             headers: {
                 Authorization: `Basic ${base64Credentials}`,
@@ -35,7 +35,7 @@ test.describe.parallel("Access token testing", () => {
             },
             data: JSON.stringify(userIdObject),
         });
-
+// проверяем данные по токену
         expect(response.status()).toBe(200);
         const responseBody = JSON.parse(await response.text());
         expect(responseBody.login).toBe(userDataForDb.Login);
@@ -44,96 +44,108 @@ test.describe.parallel("Access token testing", () => {
     });
 
     test(`POST - get token info by uuid without auth`, async ({ request }) => {
-        const tokenData = {
-            UserId: "b5d2fa64-80bb-11ee-b962-0242ac120002"
+        const anyTokenData = {
+            accessToken: uuid.v4()
         };
 
-        const response = await request.post('http://localhost:3001/api/v1/mock-token-noauth', {
+        const response = await request.post('http://localhost:8082/api/v1/access', {
             headers: {
                 'Content-Type': 'application/json'
             },
-            data: JSON.stringify(tokenData),
+            data: JSON.stringify(anyTokenData),
         });
 
         expect(response.status()).toBe(401);
+        expect(response.statusText()).toBe("Unauthorized");
+
     });
     test(`POST - get token info by uuid with invalid auth`, async ({ request }) => {
-        const username = 'sso';
-        const password = 'UrO_9D]gJxJZ$9';
-        const base64Credentials = Buffer.from(`${username}:${password}`).toString('base64');
+        const wrongSsoPassword = "UrO_9D]gJxJZ$97"
+        const base64Credentials = generateBase64Credentials(ssoUsername, wrongSsoPassword);
 
-        const tokenData = {
-            UserId: "b5d2fa64-80bb-11ee-b962-0242ac120002"
+        const anyTokenData = {
+            accessToken: uuid.v4()
         };
 
-        const response = await request.post('http://localhost:3001/api/v1/mock-token-wrong-auth', {
+        const response = await request.post('http://localhost:8082/api/v1/access', {
             headers: {
                 Authorization: `Basic ${base64Credentials}`,
                 'Content-Type': 'application/json',
             },
-            data: JSON.stringify(tokenData),
+            data: JSON.stringify(anyTokenData),
         });
 
         expect(response.status()).toBe(401);
+        expect(response.statusText()).toBe("Unauthorized");
     });
 
     test(`POST - get non-existing token info`, async ({ request }) => {
-        const username = 'sso';
-        const password = 'UrO_9D]gJxJZ$97';
-        const base64Credentials = Buffer.from(`${username}:${password}`).toString('base64');
-
-        const tokenData = {
-            UserId: "b5d2fa64-80bb-11ee-b962-0242ac120003"
+        const base64Credentials = generateBase64Credentials(ssoUsername, ssoPassword);
+        const nonExistingTokenData = {
+            accessToken: "b5d2fa64-80bb-11ee-b962-111111111111"
         };
 
-        const response = await request.post('http://localhost:3001/api/v1/mock-token-non-exist', {
+        const response = await request.post('http://localhost:8082/api/v1/access', {
             headers: {
                 Authorization: `Basic ${base64Credentials}`,
                 'Content-Type': 'application/json',
             },
-            data: JSON.stringify(tokenData),
+            data: JSON.stringify(nonExistingTokenData),
         });
 
         expect(response.status()).toBe(403);
+        expect(response.statusText()).toBe("Forbidden");
     });
 
     test(`POST - get expired token info`, async ({ request }) => {
-        const username = 'sso';
-        const password = 'UrO_9D]gJxJZ$97';
-        const base64Credentials = Buffer.from(`${username}:${password}`).toString('base64');
+        const base64Credentials = generateBase64Credentials(ssoUsername, ssoPassword);
 
-        const tokenData = {
-            accessToken: "b5d2fa64-80bb-11ee-b962-0242ac120004"
+        const plainPassword = "login1A!amoexp";
+        const expiredUserDataForDb = {
+            UserId: uuid.v4(),
+            Name: 'Max Expired Token',
+            Login: 'expiredtokenmax@gmail.com',
+            PasswordHash: await generatePasswordHash(plainPassword),
+            Role: 'renter',
+        };
+        await insertUser(expiredUserDataForDb);
+        const expiredTokenDataForDb = {
+            UserId: expiredUserDataForDb.UserId,
+            Token: uuid.v4(),
+            ExpirationDateTime: generateFormattedDate(new Date(Date.now() - 15 * 60 * 1000))
+        };
+        await insertToken(expiredTokenDataForDb);
+        const ExpiredTokenData = {
+            accessToken: expiredTokenDataForDb.Token,
         };
 
-        const response = await request.post('http://localhost:3001/api/v1/mock-token', {
+        const response = await request.post('http://localhost:8082/api/v1/access', {
             headers: {
                 Authorization: `Basic ${base64Credentials}`,
                 'Content-Type': 'application/json',
             },
-            content: JSON.stringify(tokenData),
+            content: JSON.stringify(ExpiredTokenData),
         });
 
         expect(response.status()).toBe(400);
+        expect(response.statusText()).toBe("Bad Request");
     });
 
     test(`POST - get token info by public port`, async ({ request }) => {
-        const username = 'sso';
-        const password = 'UrO_9D]gJxJZ$97';
-        const base64Credentials = Buffer.from(`${username}:${password}`).toString('base64');
+        const base64Credentials = generateBase64Credentials(ssoUsername, ssoPassword);
 
-        const tokenData = {
-            accessToken: "b5d2fa64-80bb-11ee-b962-0242ac120002"
+        const anyTokenData = {
+            accessToken: uuid.v4()
         };
 
-        const response = await request.post('http://localhost:8080/api/v1/mock-token', {
+        const response = await request.post('http://localhost:8080/api/v1/access', {
             headers: {
                 Authorization: `Basic ${base64Credentials}`,
                 'Content-Type': 'application/json',
             },
-            content: JSON.stringify(tokenData),
+            content: JSON.stringify(anyTokenData),
         });
-
         expect(response.status()).toBe(404);
+        expect(response.statusText()).toBe("Not Found");
     });
 });
