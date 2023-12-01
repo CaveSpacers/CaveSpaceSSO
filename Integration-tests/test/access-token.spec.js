@@ -3,7 +3,7 @@ const {allure} = require("allure-playwright")
 const uuid = require("uuid");
 const {generatePasswordHash, generateBase64Credentials, generateFormattedDate} = require("../main/utils");
 const {insertUser, insertToken} = require("../main/db-utils");
-const {ssoUsername, ssoPassword, baseTokenUrl} = require("../config");
+const {ssoUsername, ssoPassword, baseInternalUrl} = require("../config");
 test.describe.parallel("Access token testing", () => {
 
     test(`POST - get token info by uuid`, async ({ request }) => {
@@ -28,12 +28,12 @@ test.describe.parallel("Access token testing", () => {
             accessToken: tokenDataForDb.Token,
         };
 // отправляем запрос на токен
-        const response = await request.post(`${baseTokenUrl}/api/v1/access`, {
+        const response = await request.post(`${baseInternalUrl}/api/v1/access`, {
             headers: {
                 Authorization: `Basic ${base64Credentials}`,
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/json'
             },
-            data: JSON.stringify(userIdObject),
+            data: userIdObject,
         });
 // проверяем данные по токену
         expect(response.status()).toBe(200);
@@ -48,11 +48,11 @@ test.describe.parallel("Access token testing", () => {
             accessToken: uuid.v4()
         };
 
-        const response = await request.post(`${baseTokenUrl}/api/v1/access`, {
+        const response = await request.post(`${baseInternalUrl}/api/v1/access`, {
             headers: {
                 'Content-Type': 'application/json'
             },
-            data: JSON.stringify(anyTokenData),
+            data: anyTokenData,
         });
 
         expect(response.status()).toBe(401);
@@ -60,16 +60,15 @@ test.describe.parallel("Access token testing", () => {
 
     });
     test(`POST - get token info by uuid with invalid auth`, async ({ request }) => {
-        const wrongSsoPassword = "UrO_9D]gJxJZ$97"
-        const base64Credentials = generateBase64Credentials(ssoUsername, wrongSsoPassword);
+        const wrongBase64Credentials = uuid.v4()
 
         const anyTokenData = {
             accessToken: uuid.v4()
         };
 
-        const response = await request.post(`${baseTokenUrl}/api/v1/access`, {
+        const response = await request.post(`${baseInternalUrl}/api/v1/access`, {
             headers: {
-                Authorization: `Basic ${base64Credentials}`,
+                Authorization: `Basic ${wrongBase64Credentials}`,
                 'Content-Type': 'application/json',
             },
             data: JSON.stringify(anyTokenData),
@@ -82,15 +81,15 @@ test.describe.parallel("Access token testing", () => {
     test(`POST - get non-existing token info`, async ({ request }) => {
         const base64Credentials = generateBase64Credentials(ssoUsername, ssoPassword);
         const nonExistingTokenData = {
-            accessToken: "b5d2fa64-80bb-11ee-b962-111111111111"
+            accessToken: uuid.v4()
         };
 
-        const response = await request.post(`${baseTokenUrl}/api/v1/access`, {
+        const response = await request.post(`${baseInternalUrl}/api/v1/access`, {
             headers: {
                 Authorization: `Basic ${base64Credentials}`,
                 'Content-Type': 'application/json',
             },
-            data: JSON.stringify(nonExistingTokenData),
+            data: nonExistingTokenData,
         });
 
         expect(response.status()).toBe(403);
@@ -115,16 +114,16 @@ test.describe.parallel("Access token testing", () => {
             ExpirationDateTime: generateFormattedDate(new Date(Date.now() - 15 * 60 * 1000))
         };
         await insertToken(expiredTokenDataForDb);
-        const ExpiredTokenData = {
+        const expiredTokenData = {
             accessToken: expiredTokenDataForDb.Token,
         };
 
-        const response = await request.post(`${baseTokenUrl}/api/v1/access`, {
+        const response = await request.post(`${baseInternalUrl}/api/v1/access`, {
             headers: {
                 Authorization: `Basic ${base64Credentials}`,
                 'Content-Type': 'application/json',
             },
-            content: JSON.stringify(ExpiredTokenData),
+            content: expiredTokenData,
         });
 
         expect(response.status()).toBe(400);
@@ -143,7 +142,7 @@ test.describe.parallel("Access token testing", () => {
                 Authorization: `Basic ${base64Credentials}`,
                 'Content-Type': 'application/json',
             },
-            content: JSON.stringify(anyTokenData),
+            content: anyTokenData,
         });
         expect(response.status()).toBe(404);
         expect(response.statusText()).toBe("Not Found");

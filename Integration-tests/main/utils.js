@@ -4,9 +4,7 @@ const generatePasswordHash = async (plainPassword) => {
     const salt = await bcrypt.genSalt(10);
     return bcrypt.hash(plainPassword, salt);
 };
-const generateBase64Credentials = (username, password) => {
-    return Buffer.from(`${username}:${password}`).toString('base64');
-};
+const generateBase64Credentials = (username, password) => btoa(`${username}:${password}`);
 const generateFormattedDate = (date) => {
     return date.toLocaleString('en-US', {
         year: 'numeric',
