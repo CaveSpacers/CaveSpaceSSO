@@ -35,7 +35,7 @@ services:
       context: .
       dockerfile: .docker/integration-tests.Dockerfile
     environment:
-      BASE_URL: "http://sso-app:8080"
+      BASE_PUBLIC_URL: "http://sso-app:8080"
       BASE_INTERNAL_URL: "http://sso-app:8082"
       MOCK_BASE_URL: "http://wiremock:8080"
       DB_HOST: "sso-postgres"

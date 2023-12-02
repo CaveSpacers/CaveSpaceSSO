@@ -1,22 +1,24 @@
 const bcrypt = require("bcryptjs");
-
+const btoa = require("btoa");
 const generatePasswordHash = async (plainPassword) => {
     const salt = await bcrypt.genSalt(10);
     return bcrypt.hash(plainPassword, salt);
 };
 const generateBase64Credentials = (username, password) => btoa(`${username}:${password}`);
+
+const padTo2Digits = (value) => value.toString().padStart(2, '0');
 const generateFormattedDate = (date) => {
-    return date.toLocaleString('en-US', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        fractionalSecondDigits: 3,
-        timeZoneName: 'short',
-        timeZone: 'UTC',
-    });
+    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+    const year = date.getFullYear();
+    const month = padTo2Digits(date.getMonth() + 1);
+    const day = padTo2Digits(date.getDate());
+    const hour = padTo2Digits(date.getHours());
+    const minute = padTo2Digits(date.getMinutes());
+    const second = padTo2Digits(date.getSeconds());
+    const milliseconds = padTo2Digits(date.getMilliseconds());
+
+    return `${year}-${month}-${day} ${hour}:${minute}:${second}.${milliseconds} ${timeZone}`;
 };
 
 module.exports = {
