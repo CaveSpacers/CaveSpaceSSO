@@ -1,0 +1,27 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "/api/v1/mock-token-non-exist",
+    "headers": {
+      "Authorization": {
+        "matches": "Basic c3NvOlVyT185RF1nSnhKWiQ5Nw=="
+      },
+      "Content-Type": {
+        "equalTo": "application/json"
+      }
+    },
+    "bodyPatterns": [
+      {
+        "matchesJsonPath": "$.UserId",
+        "doesNotMatch": "b5d2fa64-80bb-11ee-b962-0242ac120002"
+      }
+    ]
+  },
+  "response": {
+    "status": 403,
+    "jsonBody": {
+      "error": "Forbidden",
+      "message": "Token does not exist"
+    }
+  }
+}

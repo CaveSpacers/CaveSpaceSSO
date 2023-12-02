@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
+using SSO.Authorization.Basic;
 using SSO.BL;
 using SSO.DAL.Implementations;
 using SSO.DAL.Interfaces;
@@ -8,6 +10,7 @@ using SSO.Bl.Interfaces;
 using SSO.Configuration;
 using SSO.Middlewares;
 using SSO.DAL;
+using SSO.Routing;
 using SSO.Services.Implementations;
 using SSO.Services.Interfaces;
 
@@ -15,7 +18,7 @@ namespace SSO;
 
 public class Startup
 {
-    public IConfiguration Configuration { get; }
+    private IConfiguration Configuration { get; }
 
     public Startup(IConfiguration configuration)
     {
@@ -29,11 +32,14 @@ public class Startup
 
         Console.WriteLine(Configuration.GetConnectionString("DefaultConnection"));
 
+        services.AddAuthentication(o => o.DefaultAuthenticateScheme = BasicAuthenticationDefaults.AuthenticationScheme)
+            .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>(
+                BasicAuthenticationDefaults.AuthenticationScheme, null);
+
         services.AddScoped<IUserValidator, UserValidator>(_ => new UserValidator());
         services.AddScoped<IUserDal, UserDal>();
         services.AddScoped<IUserBl, UserBl>();
-        services.AddScoped<IRegistryHandler, RegistryHandler>();
-        services.AddScoped<ILoginHandler, LoginHandler>();
+        services.AddScoped<IUserHandler, UserHandler>();
 
         services.AddControllers();
     }
@@ -41,9 +47,19 @@ public class Startup
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
         app.ConfigureDateStorage<ApplicationContext>();
-        app.UseMiddleware<RegistryMiddleware>();
-        app.UseRouting();
-        app.UseEndpoints(endpoints =>
-            endpoints.MapControllers());
+        
+        app.MapOnPublicPort(publicApp => publicApp
+            .UseRouting()
+            .UseMiddleware<IncomingMessagesMiddleware>()
+            .UseEndpoints(endpoints =>
+            endpoints.MapControllers()));
+        
+        app.MapOnInternalPort(publicApp => publicApp
+            .UseRouting()
+            .UseAuthentication()
+            .UseAuthorization()
+            .UseMiddleware<IncomingMessagesMiddleware>()
+            .UseEndpoints(endpoints =>
+                endpoints.MapControllers()));
     }
 }

@@ -1,4 +1,5 @@
-using SSO.Controllers.Models;
+using SSO.Controllers.RequestModels;
+using SSO.Controllers.Results;
 
 namespace SSO.Services.Interfaces;
 

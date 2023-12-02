@@ -9,8 +9,11 @@ services:
       dockerfile: .docker/sso-app.Dockerfile
     ports:
       - "8080:8080"
+      - "8082:8082"
     profiles:
       - infra
+    environment:
+      SSO: 'UrO_9D]gJxJZ97'
     networks:
       - net
   sso-postgres:
@@ -30,11 +33,12 @@ services:
     container_name: sso-integration-tests
     build:
       context: .
-      dockerfile: .docker/int.Dockerfile
+      dockerfile: .docker/integration-tests.Dockerfile
     environment:
-      - BASE_URL=http://sso-app:8080
-      - MOCK_BASE_URL=http://wiremock:8080
-      - DB_HOST=sso-postgres
+      BASE_PUBLIC_URL: "http://sso-app:8080"
+      BASE_INTERNAL_URL: "http://sso-app:8082"
+      MOCK_BASE_URL: "http://wiremock:8080"
+      DB_HOST: "sso-postgres"
     profiles:
       - tests
     networks:
