@@ -2,12 +2,17 @@ const {test, expect} = require('@playwright/test');
 const {getUserByLogin, insertUser} = require('../main/db-utils');
 const uuid = require('uuid');
 const {generatePasswordHash} = require("../main/utils");
+const bcrypt = require("bcryptjs")
+const UserBuilder = require("../main/userBuilder");
 test.describe.parallel("Registration testing", () => {
     
     test(`POST - create new user with role renter`, async ({request}) => {
-        const userData = {
-            name: 'Seva', login: 'seva@gmail.com', password: '1q2w!aA123', role: 'renter',
-        };
+        const userData = new UserBuilder()
+            .withName('Seva')
+            .withLogin('seva@gmail.com')
+            .withPassword('1q2w!aA123')
+            .withRole('renter')
+            .build();
         const response = await request.post(`/api/v1/registry`, {
             data: userData
         });
@@ -17,11 +22,15 @@ test.describe.parallel("Registration testing", () => {
         const users = await getUserByLogin(userData.login);
         expect(users.Name).toBe(userData.name);
         expect(users.Role).toBe(userData.role);
+        expect(await bcrypt.compare(userData.password, users.PasswordHash));
     });
     test(`POST - create new user with role client`, async ({request}) => {
-        const userData = {
-            name: 'Max', login: 'max@gmail.com', password: '1q2w!aA123', role: 'client'
-        };
+        const userData = new UserBuilder()
+            .withName('Max')
+            .withLogin('max@gmail.com')
+            .withPassword('1q2w!aA123')
+            .withRole('client')
+            .build();
         const response = await request.post(`/api/v1/registry`, {
             data: userData
         });
@@ -41,9 +50,10 @@ test.describe.parallel("Registration testing", () => {
             PasswordHash: await generatePasswordHash(plainPassword),
             Role: 'renter',
         };
-        const newUserWithSameEmail = {
-            name: 'Fake Max', login: 'max2@gmail.com', password: '1q2w!aA123', role: 'renter',
-        };
+        const newUserWithSameEmail = new UserBuilder()
+            .withLogin('max2@gmail.com')
+            .build();
+
         await insertUser(existingUserData);
         const response = await request.post(`/api/v1/registry`, {
             data: newUserWithSameEmail,
