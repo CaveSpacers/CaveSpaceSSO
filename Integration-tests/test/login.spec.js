@@ -2,13 +2,13 @@ const {test, expect} = require('@playwright/test');
 const {getTokenRecordByUserId, insertUser} = require('../main/db-utils');
 const uuid = require("uuid");
 const {generatePasswordHash} = require("../main/utils");
-const {UserDataForDbBuilder} = require("../main/dataBuilders");
+const {UserJsonBuilder} = require("../main/UserJsonBuilder");
 test.describe.parallel("Login testing", () => {
 
     test(`POST - login with valid credentials`, async ({request}) => {
         const plainPassword = "login1A!a";
         const passHash = await generatePasswordHash(plainPassword);
-        const userForDb = new UserDataForDbBuilder()
+        const userForDb = new UserJsonBuilder()
             .withLogin('maxdb@gmail.com')
             .withPasswordHash(passHash)
             .build();
@@ -39,7 +39,7 @@ test.describe.parallel("Login testing", () => {
     });
 
     test(`POST - login with invalid password`, async ({request}) => {
-        const userForDb = new UserDataForDbBuilder()
+        const userForDb = new UserJsonBuilder()
             .withLogin('maxdbinvpass@gmail.com')
             .build();
         await insertUser(userForDb);
@@ -61,7 +61,7 @@ test.describe.parallel("Login testing", () => {
     test(`POST - login with invalid login`, async ({request}) => {
         const plainPassword = "login22!A";
         const passHash = await generatePasswordHash(plainPassword);
-        const userForDb = new UserDataForDbBuilder()
+        const userForDb = new UserJsonBuilder()
             .withLogin('maxdbinlog@gmail.com')
             .withPasswordHash(passHash)
             .build();
@@ -86,7 +86,7 @@ test.describe.parallel("Login testing", () => {
         const plainPassword = "login22!A";
         const passHash = await generatePasswordHash(plainPassword);
         const userId = uuid.v4();
-        const userForDb = new UserDataForDbBuilder()
+        const userForDb = new UserJsonBuilder()
             .withLogin('maxdbvalid@gmail.com')
             .withPasswordHash(passHash)
             .withUserId(userId)

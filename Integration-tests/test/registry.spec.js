@@ -1,7 +1,10 @@
 const {test, expect} = require('@playwright/test');
 const {getUserByLogin, insertUser} = require('../main/db-utils');
 const bcrypt = require("bcryptjs")
-const {UserBuilder, UserDataForDbBuilder} = require("../main/dataBuilders");
+const {UserBuilder} = require("../main/UserBuilder");
+const {UserJsonBuilder} = require("../main/UserJsonBuilder");
+const Chance = require('chance');
+const chance = new Chance();
 test.describe.parallel("Registration testing", () => {
     
     test(`POST - create new user with role renter`, async ({request}) => {
@@ -34,7 +37,7 @@ test.describe.parallel("Registration testing", () => {
     });
 
     test('POST - create same email user', async ({request}) => {
-        const existingUserData = new UserDataForDbBuilder()
+        const existingUserData = new UserJsonBuilder()
             .withLogin('max3@gmail.com')
             .build();
         const newUserWithSameEmail = new UserBuilder()
@@ -140,7 +143,7 @@ test.describe.parallel("Registration testing", () => {
     })
     test('POST - too long name', async ({request}) => {
         const userData = new UserBuilder()
-            .withName('Seva12345123451234512345123451234512345123451234512')
+            .withName(chance.string({ length: 51, alpha: true }))
             .build();
         const response = await request.post(`/api/v1/registry`, {
             data: userData
@@ -151,7 +154,7 @@ test.describe.parallel("Registration testing", () => {
     });
     test('POST - too long email', async ({request}) => {
         const userData = new UserBuilder()
-            .withLogin('seva12345123451234512345123451234512345123451234512@gmail.com')
+            .withLogin(chance.string({ length: 41, alpha: true }) + "@gmail.com")
             .build();
         const response = await request.post(`/api/v1/registry`, {
             data: userData
@@ -162,7 +165,7 @@ test.describe.parallel("Registration testing", () => {
     });
     test('POST - too long password', async ({request}) => {
         const userData = new UserBuilder()
-            .withPassword('1q2w!aA1231q2w!aA1231q2w!aA1231q2w!aA1231q2w!aA1231')
+            .withPassword(chance.string({ length: 47, alpha: true }) + "!1Aa")
             .build();
         const response = await request.post(`/api/v1/registry`, {
             data: userData
