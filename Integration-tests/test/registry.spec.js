@@ -143,7 +143,7 @@ test.describe.parallel("Registration testing", () => {
     })
     test('POST - too long name', async ({request}) => {
         const userData = new UserBuilder()
-            .withName(chance.string({ length: 51, alpha: true }))
+            .withName('s'.repeat(51))
             .build();
         const response = await request.post(`/api/v1/registry`, {
             data: userData
@@ -154,7 +154,7 @@ test.describe.parallel("Registration testing", () => {
     });
     test('POST - too long email', async ({request}) => {
         const userData = new UserBuilder()
-            .withLogin(chance.string({ length: 41, alpha: true }) + "@gmail.com")
+            .withLogin('s'.repeat(41) + "@gmail.com")
             .build();
         const response = await request.post(`/api/v1/registry`, {
             data: userData
@@ -165,7 +165,7 @@ test.describe.parallel("Registration testing", () => {
     });
     test('POST - too long password', async ({request}) => {
         const userData = new UserBuilder()
-            .withPassword(chance.string({ length: 47, alpha: true }) + "!1Aa")
+            .withPassword('s'.repeat(47) + "!1Aa")
             .build();
         const response = await request.post(`/api/v1/registry`, {
             data: userData
