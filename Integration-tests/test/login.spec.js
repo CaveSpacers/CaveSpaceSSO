@@ -7,13 +7,11 @@ test.describe.parallel("Login testing", () => {
 
     test(`POST - login with valid credentials`, async ({request}) => {
         const plainPassword = "login1A!a";
-        const userForDb = {
-            UserId: uuid.v4(),
-            Name: 'Max',
-            Login: 'maxdb@gmail.com',
-            PasswordHash: await generatePasswordHash(plainPassword),
-            Role: 'renter',
-        };
+        const passHash = await generatePasswordHash(plainPassword);
+        const userForDb = new UserDataForDbBuilder()
+            .withLogin('maxdb@gmail.com')
+            .withPasswordHash(passHash)
+            .build();
         await insertUser(userForDb);
 
         const loginUserData = {
@@ -62,13 +60,11 @@ test.describe.parallel("Login testing", () => {
 
     test(`POST - login with invalid login`, async ({request}) => {
         const plainPassword = "login22!A";
-        const userForDb = {
-            UserId: uuid.v4(),
-            Name: 'Max',
-            Login: 'maxdbinlog@gmail.com',
-            PasswordHash: await generatePasswordHash(plainPassword),
-            Role: 'renter',
-        };
+        const passHash = await generatePasswordHash(plainPassword);
+        const userForDb = new UserDataForDbBuilder()
+            .withLogin('maxdbinlog@gmail.com')
+            .withPasswordHash(passHash)
+            .build();
         await insertUser(userForDb);
 
         const loginUserData = {
@@ -88,13 +84,13 @@ test.describe.parallel("Login testing", () => {
 
     test(`POST - token expiration update`, async ({request}) => {
         const plainPassword = "login22!A";
-        const userForDb = {
-            UserId: uuid.v4(),
-            Name: 'Max',
-            Login: 'maxdbvalid@gmail.com',
-            PasswordHash: await generatePasswordHash(plainPassword),
-            Role: 'renter',
-        };
+        const passHash = await generatePasswordHash(plainPassword);
+        const userId = uuid.v4();
+        const userForDb = new UserDataForDbBuilder()
+            .withLogin('maxdbvalid@gmail.com')
+            .withPasswordHash(passHash)
+            .withUserId(userId)
+            .build();
         await insertUser(userForDb);
         const loginUserData = {
             Login: 'maxdbvalid@gmail.com',
@@ -106,7 +102,7 @@ test.describe.parallel("Login testing", () => {
         });
         expect(responseFirst.status()).toBe(200);
 
-        const tokenDataFirst = await getTokenRecordByUserId(userForDb.UserId);
+        const tokenDataFirst = await getTokenRecordByUserId(userId);
         const expirationTimeFirst = tokenDataFirst.ExpirationDateTime;
 
         const responseSecond = await request.post(`/api/v1/login`, {

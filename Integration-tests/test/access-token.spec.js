@@ -4,22 +4,20 @@ const uuid = require("uuid");
 const {generatePasswordHash, generateBase64Credentials, generateFormattedDate} = require("../main/utils");
 const {insertUser, insertToken} = require("../main/db-utils");
 const {ssoUsername, ssoPassword, baseInternalUrl} = require("../config");
+const {UserDataForDbBuilder} = require("../main/dataBuilders");
 test.describe.parallel("Access token testing", () => {
 
     test(`POST - get token info by uuid`, async ({ request }) => {
-
         const base64Credentials = generateBase64Credentials(ssoUsername, ssoPassword);
         const plainPassword = "login1A!amo";
-        const userDataForDb = {
-            UserId: uuid.v4(),
-            Name: 'Max Token',
-            Login: 'validtokenmax@gmail.com',
-            PasswordHash: await generatePasswordHash(plainPassword),
-            Role: 'client',
-        };
-        await insertUser(userDataForDb);
+        const passHash = await generatePasswordHash(plainPassword);
+        const userForDb = new UserDataForDbBuilder()
+            .withPasswordHash(passHash)
+            .build();
+        await insertUser(userForDb);
+
         const tokenDataForDb = {
-            UserId: userDataForDb.UserId,
+            UserId: userForDb.UserId,
             Token: uuid.v4(),
             ExpirationDateTime: generateFormattedDate(new Date(Date.now() + 15 * 60 * 1000))
         };
@@ -37,9 +35,9 @@ test.describe.parallel("Access token testing", () => {
 
         expect(response.status()).toBe(200);
         const responseBody = JSON.parse(await response.text());
-        expect(responseBody.login).toBe(userDataForDb.Login);
-        expect(responseBody.name).toBe(userDataForDb.Name);
-        expect(responseBody.role).toBe(userDataForDb.Role);
+        expect(responseBody.login).toBe(userForDb.Login);
+        expect(responseBody.name).toBe(userForDb.Name);
+        expect(responseBody.role).toBe(userForDb.Role);
     });
 
     test(`POST - get token info by uuid without auth`, async ({ request }) => {
@@ -92,16 +90,13 @@ test.describe.parallel("Access token testing", () => {
 
     test(`POST - get expired token info`, async ({ request }) => {
         const base64Credentials = generateBase64Credentials(ssoUsername, ssoPassword);
-
         const plainPassword = "login1A!amoexp";
-        const expiredUserDataForDb = {
-            UserId: uuid.v4(),
-            Name: 'Max Expired Token',
-            Login: 'expiredtokenmax@gmail.com',
-            PasswordHash: await generatePasswordHash(plainPassword),
-            Role: 'renter',
-        };
+        const passHash = await generatePasswordHash(plainPassword);
+        const expiredUserDataForDb = new UserDataForDbBuilder()
+            .withPasswordHash(passHash)
+            .build();
         await insertUser(expiredUserDataForDb);
+
         const expiredTokenDataForDb = {
             UserId: expiredUserDataForDb.UserId,
             Token: uuid.v4(),

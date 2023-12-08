@@ -64,7 +64,7 @@ class UserDataForDbBuilder {
         return this;
     }
 
-    withPassword(passwordHash) {
+    withPasswordHash(passwordHash) {
         this.userData.PasswordHash = passwordHash;
         return this;
     }
