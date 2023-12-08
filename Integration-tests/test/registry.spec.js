@@ -1,9 +1,7 @@
 const {test, expect} = require('@playwright/test');
 const {getUserByLogin, insertUser} = require('../main/db-utils');
-const uuid = require('uuid');
-const {generatePasswordHash} = require("../main/utils");
 const bcrypt = require("bcryptjs")
-const UserBuilder = require("../main/userBuilder");
+const {UserBuilder, UserDataForDbBuilder} = require("../main/dataBuilders");
 test.describe.parallel("Registration testing", () => {
     
     test(`POST - create new user with role renter`, async ({request}) => {
@@ -36,16 +34,11 @@ test.describe.parallel("Registration testing", () => {
     });
 
     test('POST - create same email user', async ({request}) => {
-        const plainPassword = "1q2w!aA123";
-        const existingUserData = {
-            UserId: uuid.v4(),
-            Name: 'Max',
-            Login: 'max2@gmail.com',
-            PasswordHash: await generatePasswordHash(plainPassword),
-            Role: 'renter',
-        };
+        const existingUserData = new UserDataForDbBuilder()
+            .withLogin('max3@gmail.com')
+            .build();
         const newUserWithSameEmail = new UserBuilder()
-            .withLogin('max2@gmail.com')
+            .withLogin('max3@gmail.com')
             .build();
 
         await insertUser(existingUserData);

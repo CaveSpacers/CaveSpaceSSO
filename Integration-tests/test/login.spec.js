@@ -2,6 +2,7 @@ const {test, expect} = require('@playwright/test');
 const {getTokenRecordByUserId, insertUser} = require('../main/db-utils');
 const uuid = require("uuid");
 const {generatePasswordHash} = require("../main/utils");
+const {UserDataForDbBuilder} = require("../main/dataBuilders");
 test.describe.parallel("Login testing", () => {
 
     test(`POST - login with valid credentials`, async ({request}) => {
@@ -40,14 +41,9 @@ test.describe.parallel("Login testing", () => {
     });
 
     test(`POST - login with invalid password`, async ({request}) => {
-        const invalidPassword = "login22!A";
-        const userForDb = {
-            UserId: uuid.v4(),
-            Name: 'Max',
-            Login: 'maxdbinvpass@gmail.com',
-            PasswordHash: await generatePasswordHash(invalidPassword),
-            Role: 'renter',
-        };
+        const userForDb = new UserDataForDbBuilder()
+            .withLogin('maxdbinvpass@gmail.com')
+            .build();
         await insertUser(userForDb);
 
         const loginUserData = {
