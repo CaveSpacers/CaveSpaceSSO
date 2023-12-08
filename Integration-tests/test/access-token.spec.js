@@ -4,14 +4,14 @@ const uuid = require("uuid");
 const {generatePasswordHash, generateBase64Credentials, generateFormattedDate} = require("../main/utils");
 const {insertUser, insertToken} = require("../main/db-utils");
 const {ssoUsername, ssoPassword, baseInternalUrl} = require("../config");
-const {UserJsonBuilder} = require("../main/UserJsonBuilder");
+const {UserForDbBuilder} = require("../main/UserForDbBuilder");
 test.describe.parallel("Access token testing", () => {
 
     test(`POST - get token info by uuid`, async ({ request }) => {
         const base64Credentials = generateBase64Credentials(ssoUsername, ssoPassword);
         const plainPassword = "login1A!amo";
         const passHash = await generatePasswordHash(plainPassword);
-        const userForDb = new UserJsonBuilder()
+        const userForDb = new UserForDbBuilder()
             .withPasswordHash(passHash)
             .build();
         await insertUser(userForDb);
@@ -92,7 +92,7 @@ test.describe.parallel("Access token testing", () => {
         const base64Credentials = generateBase64Credentials(ssoUsername, ssoPassword);
         const plainPassword = "login1A!amoexp";
         const passHash = await generatePasswordHash(plainPassword);
-        const expiredUserDataForDb = new UserJsonBuilder()
+        const expiredUserDataForDb = new UserForDbBuilder()
             .withPasswordHash(passHash)
             .build();
         await insertUser(expiredUserDataForDb);

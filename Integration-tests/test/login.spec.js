@@ -2,21 +2,21 @@ const {test, expect} = require('@playwright/test');
 const {getTokenRecordByUserId, insertUser} = require('../main/db-utils');
 const uuid = require("uuid");
 const {generatePasswordHash} = require("../main/utils");
-const {UserJsonBuilder} = require("../main/UserJsonBuilder");
+const {UserForDbBuilder} = require("../main/UserForDbBuilder");
 test.describe.parallel("Login testing", () => {
 
     test(`POST - login with valid credentials`, async ({request}) => {
         const plainPassword = "login1A!a";
         const passHash = await generatePasswordHash(plainPassword);
-        const userForDb = new UserJsonBuilder()
+        const userForDb = new UserForDbBuilder()
             .withLogin('maxdb@gmail.com')
             .withPasswordHash(passHash)
             .build();
         await insertUser(userForDb);
 
         const loginUserData = {
-            Login: 'maxdb@gmail.com',
-            Password: plainPassword,
+            login: 'maxdb@gmail.com',
+            password: plainPassword,
         };
         const response = await request.post(`/api/v1/login`, {
             data: loginUserData,
@@ -39,14 +39,14 @@ test.describe.parallel("Login testing", () => {
     });
 
     test(`POST - login with invalid password`, async ({request}) => {
-        const userForDb = new UserJsonBuilder()
+        const userForDb = new UserForDbBuilder()
             .withLogin('maxdbinvpass@gmail.com')
             .build();
         await insertUser(userForDb);
 
         const loginUserData = {
-            Login: 'maxdbinvpass@gmail.com',
-            Password: 'login22!A2',
+            login: 'maxdbinvpass@gmail.com',
+            password: 'login22!A2',
         };
 
         const response = await request.post(`/api/v1/login`, {
@@ -61,15 +61,15 @@ test.describe.parallel("Login testing", () => {
     test(`POST - login with invalid login`, async ({request}) => {
         const plainPassword = "login22!A";
         const passHash = await generatePasswordHash(plainPassword);
-        const userForDb = new UserJsonBuilder()
+        const userForDb = new UserForDbBuilder()
             .withLogin('maxdbinlog@gmail.com')
             .withPasswordHash(passHash)
             .build();
         await insertUser(userForDb);
 
         const loginUserData = {
-            Login: 'maxdbinlog2@gmail.com',
-            Password: 'login22!A',
+            login: 'maxdbinlog2@gmail.com',
+            password: 'login22!A',
         };
 
         const response = await request.post(`/api/v1/login`, {
@@ -86,15 +86,15 @@ test.describe.parallel("Login testing", () => {
         const plainPassword = "login22!A";
         const passHash = await generatePasswordHash(plainPassword);
         const userId = uuid.v4();
-        const userForDb = new UserJsonBuilder()
+        const userForDb = new UserForDbBuilder()
             .withLogin('maxdbvalid@gmail.com')
             .withPasswordHash(passHash)
             .withUserId(userId)
             .build();
         await insertUser(userForDb);
         const loginUserData = {
-            Login: 'maxdbvalid@gmail.com',
-            Password: 'login22!A',
+            login: 'maxdbvalid@gmail.com',
+            password: 'login22!A',
         };
 
         const responseFirst = await request.post(`/api/v1/login`, {

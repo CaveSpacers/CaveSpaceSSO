@@ -1,7 +1,7 @@
 const Chance = require('chance');
 const chance = new Chance();
 const uuid = require("uuid");
-class UserJsonBuilder {
+class UserForDbBuilder {
     constructor() {
         this.userData = {
             UserId: uuid.v4(),
@@ -41,4 +41,4 @@ class UserJsonBuilder {
         return { ...this.userData };
     }
 }
-module.exports = {UserJsonBuilder};
+module.exports = {UserForDbBuilder: UserForDbBuilder};

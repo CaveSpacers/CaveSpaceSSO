@@ -2,7 +2,7 @@ const {test, expect} = require('@playwright/test');
 const {getUserByLogin, insertUser} = require('../main/db-utils');
 const bcrypt = require("bcryptjs")
 const {UserBuilder} = require("../main/UserBuilder");
-const {UserJsonBuilder} = require("../main/UserJsonBuilder");
+const {UserForDbBuilder} = require("../main/UserForDbBuilder");
 const Chance = require('chance');
 const chance = new Chance();
 test.describe.parallel("Registration testing", () => {
@@ -37,7 +37,7 @@ test.describe.parallel("Registration testing", () => {
     });
 
     test('POST - create same email user', async ({request}) => {
-        const existingUserData = new UserJsonBuilder()
+        const existingUserData = new UserForDbBuilder()
             .withLogin('max3@gmail.com')
             .build();
         const newUserWithSameEmail = new UserBuilder()
