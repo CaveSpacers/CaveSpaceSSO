@@ -125,7 +125,7 @@ test.describe.parallel("Access token testing", () => {
             accessToken: uuid.v4()
         };
 
-        const response = await request.post('/api/v1/access', {
+        const response = await request.post('', {
             headers: {
                 Authorization: `Basic ${base64Credentials}`,
             },
