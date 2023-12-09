@@ -19,7 +19,7 @@ test.describe.parallel("Access token testing", () => {
         const tokenDataForDb = {
             UserId: userForDb.UserId,
             Token: uuid.v4(),
-            ExpirationDateTime: generateFormattedDate(new Date(Date.now() + 15 * 60 * 1000))
+            ExpirationDateTime: generateFormattedDate(new Date(Date.now() - 15 * 60 * 1000))
         };
         await insertToken(tokenDataForDb);
         const userIdObject = {
@@ -125,7 +125,7 @@ test.describe.parallel("Access token testing", () => {
             accessToken: uuid.v4()
         };
 
-        const response = await request.post('', {
+        const response = await request.post('/api/v1/access', {
             headers: {
                 Authorization: `Basic ${base64Credentials}`,
             },
