@@ -19,7 +19,7 @@ test.describe.parallel("Access token testing", () => {
         const tokenDataForDb = {
             UserId: userForDb.UserId,
             Token: uuid.v4(),
-            ExpirationDateTime: generateFormattedDate(new Date(Date.now() - 15 * 60 * 1000))
+            ExpirationDateTime: generateFormattedDate(new Date(Date.now() + 15 * 60 * 1000))
         };
         await insertToken(tokenDataForDb);
         const userIdObject = {
@@ -133,5 +133,9 @@ test.describe.parallel("Access token testing", () => {
         });
         expect(response.status()).toBe(404);
         expect(response.statusText()).toBe("Not Found");
+    });
+    
+    test('Example', () => {
+       expect(true).toBeFalsy(); 
     });
 });
