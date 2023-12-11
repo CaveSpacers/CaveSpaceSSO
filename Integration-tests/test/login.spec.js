@@ -55,7 +55,7 @@ test.describe.parallel("Login testing", () => {
         expect(response.status()).toBe(400);
 
         const responseBody = JSON.parse(await response.text());
-        expect(responseBody[0].code).toBe("InvalidCredentials");
+        expect(responseBody.code).toBe("InvalidCredentials");
     });
 
     test(`POST - login with invalid login`, async ({request}) => {
@@ -78,7 +78,7 @@ test.describe.parallel("Login testing", () => {
         expect(response.status()).toBe(400);
 
         const responseBody = JSON.parse(await response.text());
-        expect(responseBody[0].code).toBe("InvalidCredentials");
+        expect(responseBody.code).toBe("InvalidCredentials");
 
     });
 

@@ -28,9 +28,7 @@ public class AccountControllerPublic : Controller
         var result = await _userHandler.Registry(model);
 
         if (result.IsSucceeded) return Ok();
-
-        if (result.IsBadRequest) return BadRequest(result.Errors());
-
+        
         if (result.IsConflict) return Conflict(result.Errors());
 
         return StatusCode(500);
@@ -45,9 +43,7 @@ public class AccountControllerPublic : Controller
         var result = await _userHandler.Login(model);
 
         if (result.IsSucceeded) return Ok(result.Response());
-
-        if (result.IsBadRequest) return BadRequest(result.Errors());
-
+        
         return StatusCode(500);
     }
 }

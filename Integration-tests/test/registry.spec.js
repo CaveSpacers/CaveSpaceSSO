@@ -50,7 +50,7 @@ test.describe.parallel("Registration testing", () => {
         });
         expect(response.status()).toBe(409);
         const responseBody = JSON.parse(await response.text());
-        expect(responseBody[0].code).toBe("UserAlreadyExist");
+        expect(responseBody.code).toBe("UserAlreadyExist");
     });
     test('POST - create user with short password', async ({request}) => {
         const userData = new UserBuilder()
@@ -61,7 +61,7 @@ test.describe.parallel("Registration testing", () => {
         });
         const responseBody = JSON.parse(await response.text());
         expect(response.status()).toBe(400);
-        expect(responseBody[0].code).toBe("PasswordTooShort");
+        expect(responseBody.code).toBe("PasswordTooShort");
     });
     test('POST - password without capital letters', async ({request}) => {
         const userData = new UserBuilder()
@@ -72,7 +72,7 @@ test.describe.parallel("Registration testing", () => {
         });
         const responseBody = JSON.parse(await response.text());
         expect(response.status()).toBe(400);
-        expect(responseBody[0].code).toBe("PasswordMissingUppercase");
+        expect(responseBody.code).toBe("PasswordMissingUppercase");
     });
     test('POST - password without specsymbols', async ({request}) => {
         const userData = new UserBuilder()
@@ -83,7 +83,7 @@ test.describe.parallel("Registration testing", () => {
         });
         const responseBody = JSON.parse(await response.text());
         expect(response.status()).toBe(400);
-        expect(responseBody[0].code).toBe("PasswordMissingSpecialCharacter");
+        expect(responseBody.code).toBe("PasswordMissingSpecialCharacter");
     });
     test('POST - password without digits', async ({request}) => {
         const userData = new UserBuilder()
@@ -94,7 +94,7 @@ test.describe.parallel("Registration testing", () => {
         });
         const responseBody = JSON.parse(await response.text());
         expect(response.status()).toBe(400);
-        expect(responseBody[0].code).toBe("PasswordMissingDigit");
+        expect(responseBody.code).toBe("PasswordMissingDigit");
     });
     test('POST - invalid email format', async ({request}) => {
         const userData = new UserBuilder()
@@ -105,7 +105,7 @@ test.describe.parallel("Registration testing", () => {
         });
         const responseBody = JSON.parse(await response.text());
         expect(response.status()).toBe(400);
-        expect(responseBody[0].code).toBe("InvalidEmailFormat");
+        expect(responseBody.code).toBe("InvalidEmailFormat");
     });
     test('POST - invalid email format - 2', async ({request}) => {
         const userData = new UserBuilder()
@@ -116,7 +116,7 @@ test.describe.parallel("Registration testing", () => {
         });
         const responseBody = JSON.parse(await response.text());
         expect(response.status()).toBe(400);
-        expect(responseBody[0].code).toBe("InvalidEmailFormat");
+        expect(responseBody.code).toBe("InvalidEmailFormat");
     });
     test('POST - invalid email format - 3', async ({request}) => {
         const userData = new UserBuilder()
@@ -127,7 +127,7 @@ test.describe.parallel("Registration testing", () => {
         });
         const responseBody = JSON.parse(await response.text());
         expect(response.status()).toBe(400);
-        expect(responseBody[0].code).toBe("InvalidEmailFormat");
+        expect(responseBody.code).toBe("InvalidEmailFormat");
     });
     test('POST - invalid user role', async ({request}) => {
         const userData = new UserBuilder()
@@ -139,7 +139,7 @@ test.describe.parallel("Registration testing", () => {
         });
         const responseBody = JSON.parse(await response.text());
         expect(response.status()).toBe(400);
-        expect(responseBody[0].code).toBe("InvalidRole");
+        expect(responseBody.code).toBe("InvalidRole");
     })
     test('POST - too long name', async ({request}) => {
         const userData = new UserBuilder()
@@ -150,7 +150,7 @@ test.describe.parallel("Registration testing", () => {
         });
         const responseBody = JSON.parse(await response.text());
         expect(response.status()).toBe(400);
-        expect(responseBody[0].code).toBe("NameIsTooLong");
+        expect(responseBody.code).toBe("NameIsTooLong");
     });
     test('POST - too long email', async ({request}) => {
         const userData = new UserBuilder()
@@ -161,7 +161,7 @@ test.describe.parallel("Registration testing", () => {
         });
         const responseBody = JSON.parse(await response.text());
         expect(response.status()).toBe(400);
-        expect(responseBody[0].code).toBe("EmailIsTooLong");
+        expect(responseBody.code).toBe("EmailIsTooLong");
     });
     test('POST - too long password', async ({request}) => {
         const userData = new UserBuilder()
@@ -172,7 +172,7 @@ test.describe.parallel("Registration testing", () => {
         });
         const responseBody = JSON.parse(await response.text());
         expect(response.status()).toBe(400);
-        expect(responseBody[0].code).toBe("PasswordIsTooLong");
+        expect(responseBody.code).toBe("PasswordIsTooLong");
     });
 });
 
