@@ -134,8 +134,4 @@ test.describe.parallel("Access token testing", () => {
         expect(response.status()).toBe(404);
         expect(response.statusText()).toBe("Not Found");
     });
-    
-    test('Example', () => {
-       expect(true).toBeFalsy(); 
-    });
 });

@@ -15,4 +15,3 @@ jobs:
       - name: Run tests
         run: |
           ./run-test.sh
-          echo "::set-output name=exit_code::${?}"
