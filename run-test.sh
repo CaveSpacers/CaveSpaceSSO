@@ -3,6 +3,8 @@ docker-compose -f docker-compose-local.yml --profile tests build &&
 docker-compose -f docker-compose-local.yml --profile tests up
 exit_code=$?
 
+echp $exit_code
+
 exit $exit_code
 #test_status=$?
 #exit $test_status
