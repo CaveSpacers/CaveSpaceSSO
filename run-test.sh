@@ -1,9 +1,9 @@
 #!/bin/bash
 docker-compose -f docker-compose-local.yml --profile tests build &&
-docker-compose -f docker-compose-local.yml --profile tests up
+docker-compose -f docker-compose-local.yml --profile tests up --exit-code-from=sso-integration-tests
 exit_code=$?
 
-echp $exit_code
+echo $exit_code
 
 exit $exit_code
 #test_status=$?
