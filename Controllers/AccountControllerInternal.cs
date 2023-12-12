@@ -30,8 +30,6 @@ public class AccountControllerInternal : Controller
 
         if (result.IsForbidden) return Forbid();
         
-        if (result.IsBadRequest) return BadRequest(result.Errors());
-
         return StatusCode(500);
     }
 }

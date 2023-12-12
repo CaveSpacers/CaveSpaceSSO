@@ -1,12 +1,13 @@
 using SSO.Controllers.Results;
+using SSO.Exceptions;
 
 namespace SSO.Middlewares;
 
-public class IncomingMessagesMiddleware
+public class BehaviorMiddleware
 {
     private readonly RequestDelegate _next;
 
-    public IncomingMessagesMiddleware(RequestDelegate next)
+    public BehaviorMiddleware(RequestDelegate next)
     {
         _next = next;
     }
@@ -17,17 +18,16 @@ public class IncomingMessagesMiddleware
         {
             await _next(httpContext);
         }
-        catch (Exception exception)
+        catch (BehaviorException e)
         {
-            Console.WriteLine(exception.Message);
+            Console.WriteLine(e.Message);
 
-            var error = new Error
-            (
-                "UnexpectedError",
-                "Unexpected error during operation"
+            var error = new Error(
+                e.Code,
+                e.Message
             );
 
-            httpContext.Response.StatusCode = 400;
+            httpContext.Response.StatusCode = e.Status;
 
             await httpContext.Response.WriteAsJsonAsync(error);
         }

@@ -4,37 +4,27 @@ using SSO.Bl.Interfaces;
 using SSO.Controllers.RequestModels;
 using SSO.Controllers.ResponseModels;
 using SSO.Controllers.Results;
-using SSO.Services.Interfaces;
+using SSO.Exceptions;
 
 namespace SSO.BL;
 
 public class UserBl : IUserBl
 {
-    private readonly IUserValidator _userValidator;
     private readonly IUserDal _userDal;
 
-    public UserBl(IUserDal userDal, IUserValidator userValidator)
+    public UserBl(IUserDal userDal)
     {
-        _userValidator = userValidator;
         _userDal = userDal;
     }
 
     public async Task<Result> CreateUser(RegistryModel model)
     {
-        var validationResults = _userValidator.Validate(model).Result;
-
-        if (validationResults.IsBadRequest)
-        {
-            return validationResults;
-        }
 
         var userRecord = await _userDal.GetUserRecordByLogin(model.Login);
 
         if (userRecord != null)
         {
-            return Result.Conflict(
-                new Error("UserAlreadyExist",
-                    "The user with current email already exist"));
+            throw new UserAllReadyExistException();
         }
 
         var passwordHash = GeneratePasswordHash(model.Password);
@@ -58,9 +48,7 @@ public class UserBl : IUserBl
         var userRecord = await _userDal.GetUserRecordByLogin(model.Login);
         if (userRecord == null)
         {
-            return Result.BadRequest(
-                new Error("InvalidCredentials",
-                    "Invalid email or password"));
+            throw new InvalidCredentialsException();
         }
 
         if (BCrypt.Net.BCrypt.Verify(model.Password, userRecord.PasswordHash))
@@ -91,9 +79,7 @@ public class UserBl : IUserBl
                 new LoginResponse(accessToken));
         }
 
-        return Result.BadRequest(
-            new Error("InvalidCredentials",
-                "Invalid email or password"));
+        throw new InvalidCredentialsException();
     }
 
     public async Task<Result> GetUserByToken(AccessModel model)
@@ -109,8 +95,7 @@ public class UserBl : IUserBl
         
         if (tokenRecord.ExpirationDateTime < currentUtcTime)
         {
-            return Result.BadRequest(
-                new Error("TokenIsExpired", "Token is expired"));
+            throw new TokenIsExpiredException();
         }
 
         var userRecord = await _userDal.GetUserRecordByUserId(tokenRecord.UserId);

@@ -11,8 +11,6 @@ using SSO.Configuration;
 using SSO.Middlewares;
 using SSO.DAL;
 using SSO.Routing;
-using SSO.Services.Implementations;
-using SSO.Services.Interfaces;
 
 namespace SSO;
 
@@ -36,7 +34,6 @@ public class Startup
             .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>(
                 BasicAuthenticationDefaults.AuthenticationScheme, null);
 
-        services.AddScoped<IUserValidator, UserValidator>(_ => new UserValidator());
         services.AddScoped<IUserDal, UserDal>();
         services.AddScoped<IUserBl, UserBl>();
         services.AddScoped<IUserHandler, UserHandler>();
@@ -51,6 +48,7 @@ public class Startup
         app.MapOnPublicPort(publicApp => publicApp
             .UseRouting()
             .UseMiddleware<IncomingMessagesMiddleware>()
+            .UseMiddleware<BehaviorMiddleware>()
             .UseEndpoints(endpoints =>
             endpoints.MapControllers()));
         
@@ -59,6 +57,7 @@ public class Startup
             .UseAuthentication()
             .UseAuthorization()
             .UseMiddleware<IncomingMessagesMiddleware>()
+            .UseMiddleware<BehaviorMiddleware>()
             .UseEndpoints(endpoints =>
                 endpoints.MapControllers()));
     }
